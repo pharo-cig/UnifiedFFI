@@ -74,10 +74,10 @@ FFIValueHolder class >> newType: aTypeClass handle: aHandle [
 	yourself
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'private' }
 FFIValueHolder >> adoptAddress: anExternalAddress [
-self halt.
-	handle := anExternalAddress
+
+	handle := anExternalAddress getHandle
 ]
 
 { #category : 'accessing' }
@@ -101,8 +101,11 @@ FFIValueHolder >> initializeType: aType handle: aHandle [
 	self initialize
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'converting' }
 FFIValueHolder >> packToArity: aNumber [
+	"holders do not packarity"
+
+	^ self
 ]
 
 { #category : 'private' }
@@ -124,8 +127,11 @@ FFIValueHolder >> type [
 	^ type
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'converting' }
 FFIValueHolder >> unpackFromArity: aNumber [
+	"holders do not pack arity"
+
+	^ self
 ]
 
 { #category : 'accessing' }

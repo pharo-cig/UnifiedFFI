@@ -6,6 +6,15 @@ Class {
 }
 
 { #category : 'accessing' }
+FFIValueHolderTest >> ffiMethodCharPointerPointer: value [
+
+	^ self 
+		ffiCall: #(int TestCharPointerPointerValueHolder(char **value))
+		module: 'to-test'
+		options: #(+optCallbackCall)
+]
+
+{ #category : 'accessing' }
 FFIValueHolderTest >> ffiMethodInt: value [
 
 	^ self 
@@ -72,6 +81,32 @@ FFIValueHolderTest >> testCallBasicValueWithValueHolder [
 	self assert: result equals: 1.
 	resultValue := holder value.
 	self assert: resultValue equals: 42
+]
+
+{ #category : 'tests' }
+FFIValueHolderTest >> testCallCharPointerPointerWithValueHolder [
+	| holder result string |
+	
+	holder :=  FFIOop newValueHolder.
+	
+	FFICallbackFunctionResolution 
+		registerCallback: (FFICallback 
+			signature: #(int (char **aValue)) 
+			block: [ :aValue |
+				| externalString |
+				externalString := ExternalAddress fromString: 'Hello, World'.
+				aValue pointerAt: 1 put: externalString.
+				1 ])
+		as: #TestCharPointerPointerValueHolder.
+
+	result := self ffiMethodCharPointerPointer: holder.
+	
+	self assert: result equals: 1.
+	string := holder value.
+	self 
+		assert: string utf8StringFromCString
+		equals: 'Hello, World'.
+	string free
 ]
 
 { #category : 'tests' }
