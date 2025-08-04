@@ -81,6 +81,20 @@ FFIValueHolder >> adoptAddress: anExternalAddress [
 ]
 
 { #category : 'accessing' }
+FFIValueHolder >> arrayOf: aTypeOrClass size: aNumber [ 
+	| first arrayType |
+	
+	arrayType := FFIExternalType resolveType: aTypeOrClass.
+	first := self getHandle pointerAt: 1.
+	^ Array streamContents: [ :stream |
+		0 to: aNumber - 1 do: [ :index |
+			| next value |
+			next := first + (index * arrayType externalTypeSize).
+			value := arrayType handle: next at: 1.
+			stream nextPut: value ] ]
+]
+
+{ #category : 'accessing' }
 FFIValueHolder >> getHandle [
 	"for compatibility"
 

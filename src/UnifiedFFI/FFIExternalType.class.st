@@ -254,6 +254,12 @@ FFIExternalType >> isLiteralArgument [
 ]
 
 { #category : 'testing' }
+FFIExternalType >> isOop [
+	
+	^ false
+]
+
+{ #category : 'testing' }
 FFIExternalType >> isPointer [
 	^ self pointerArity > 0
 ]

@@ -9,6 +9,25 @@ Class {
 	#tag : 'Objects'
 }
 
+{ #category : 'as yet unclassified' }
+FFIReferenceValueHolder >> arrayOfSize: aNumber [ 
+	| first |
+
+	first := self getHandle pointerAt: 1.
+	^ Array streamContents: [ :stream |
+		0 to: aNumber - 1 do: [ :index |
+			| next value |
+			next := first + (index * FFIExternalType pointerSize).
+			value := self typeClass fromHandle: next.
+			stream nextPut: value ] ]
+]
+
+{ #category : 'private' }
+FFIReferenceValueHolder >> typeClass [
+
+	^ self type class
+]
+
 { #category : 'accessing' }
 FFIReferenceValueHolder >> value: anOpaqueObject [
 
