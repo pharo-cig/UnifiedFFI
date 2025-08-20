@@ -33,6 +33,15 @@ FFIValueHolderTest >> ffiMethodIntPointer: value [
 ]
 
 { #category : 'accessing' }
+FFIValueHolderTest >> ffiMethodStructPointerPointer: value [
+
+	^ self 
+		ffiCall: #(int TestStructPointerPointerValueHolder(FFITestStructure **value))
+		module: 'to-test'
+		options: #(+optCallbackCall)
+]
+
+{ #category : 'accessing' }
 FFIValueHolderTest >> ffiMethodStructure: value [
 
 	^ self 
@@ -149,6 +158,37 @@ FFIValueHolderTest >> testCallIntPointerWithValueHolder [
 		assert: resultIntegers
 		equals: #(1 2 3 4 42).
 	holder value free
+]
+
+{ #category : 'tests' }
+FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
+	| holder result string |
+	
+	holder :=  FFITestStructure newValueHolder.
+	
+	FFICallbackFunctionResolution 
+		registerCallback: (FFICallback 
+			signature: #(int (FFITestStructure **aValue)) 
+			block: [ :aValue |
+				| bytes allocated |
+				bytes := ByteArray streamContents: [ :stream |
+					0 to: 2 do: [ :i | 
+						stream nextPutAll: (FFITestStructure new 
+							long: 42 + i;
+							getHandle) ] ].
+				allocated := ExternalAddress allocate:bytes size.
+				LibC memCopy: bytes to: allocated size: bytes size.
+				aValue pointerAt: 1 put: allocated.
+				3 ])
+		as: #TestStructPointerPointerValueHolder.
+
+	result := self ffiMethodStructPointerPointer: holder.
+	
+	self assert: result equals: 3.
+	self 
+		assert: ((holder arrayOfSize: 3) collect: #long) 
+		equals: #(42 43 44).
+	holder value getHandle free.
 ]
 
 { #category : 'tests' }

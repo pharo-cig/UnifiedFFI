@@ -10,22 +10,32 @@ Class {
 }
 
 { #category : 'accessing' }
-FFIReferenceValueHolder >> arrayOfSize: aNumber [ 
-	| first |
+FFIReferenceValueHolder >> arrayOfSize: aNumber [
+	| next |
 
-	first := self getHandle pointerAt: 1.
+	next := ExternalAddress new 
+		adoptAddress: self getHandle;
+		yourself.
 	^ Array streamContents: [ :stream |
-		0 to: aNumber - 1 do: [ :index |
-			| next value |
-			next := first + (index * FFIExternalType pointerSize).
+		aNumber timesRepeat: [
+			| value |
 			value := self typeClass fromHandle: next.
-			stream nextPut: value ] ]
+			stream nextPut: value.
+			next := next + self typeSize ] ]
 ]
 
 { #category : 'private' }
 FFIReferenceValueHolder >> typeClass [
 
 	^ self type class
+]
+
+{ #category : 'private' }
+FFIReferenceValueHolder >> typeSize [
+
+	^ (self typeClass inheritsFrom: FFIStructure)
+		ifTrue: [ self typeClass structureSize ]
+		ifFalse: [ FFIExternalType pointerSize ]
 ]
 
 { #category : 'accessing' }
