@@ -4,10 +4,21 @@ This is a special `FFIValueHolder` for referenced objects (structs, opaque objec
 Class {
 	#name : 'FFIReferenceValueHolder',
 	#superclass : 'FFIValueHolder',
+	#instVars : [
+		'typeSize'
+	],
 	#category : 'UnifiedFFI-Objects',
 	#package : 'UnifiedFFI',
 	#tag : 'Objects'
 }
+
+{ #category : 'instance creation' }
+FFIReferenceValueHolder class >> newType: aType size: aNumber [
+
+	^ (self newType: aType)
+		typeSize: aNumber;
+		yourself
+]
 
 { #category : 'accessing' }
 FFIReferenceValueHolder >> arrayOfSize: aNumber [
@@ -33,9 +44,13 @@ FFIReferenceValueHolder >> typeClass [
 { #category : 'private' }
 FFIReferenceValueHolder >> typeSize [
 
-	^ (self typeClass inheritsFrom: FFIStructure)
-		ifTrue: [ self typeClass structureSize ]
-		ifFalse: [ FFIExternalType pointerSize ]
+	^ typeSize
+]
+
+{ #category : 'initialization' }
+FFIReferenceValueHolder >> typeSize: aNumber [ 
+
+	typeSize := aNumber
 ]
 
 { #category : 'accessing' }

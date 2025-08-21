@@ -312,7 +312,9 @@ FFIStructure class >> newBuffer [
 { #category : 'instance creation' }
 FFIStructure class >> newValueHolder [
 
-	^ FFIReferenceValueHolder newType: self new 
+	^ FFIReferenceValueHolder 
+		newType: self new 
+		size: self structureSize
 ]
 
 { #category : 'private' }
