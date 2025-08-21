@@ -162,7 +162,7 @@ FFIValueHolderTest >> testCallIntPointerWithValueHolder [
 
 { #category : 'tests' }
 FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
-	| holder result string |
+	| holder result |
 	
 	holder :=  FFITestStructure newValueHolder.
 	
