@@ -162,10 +162,29 @@ FFIValueHolderTest >> testCallIntPointerWithValueHolder [
 
 { #category : 'tests' }
 FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
+	"The test validates that a structuture can be passed to in struct** format 
+	 and the value holder will be capable of give back a list of structs. 
+	 This is needed, for example, on functions like clang_tokenize (libclang), 
+	 who has this signature: 
+	 
+	 CINDEX_LINKAGE void clang_tokenize (
+	 		CXTranslationUnit  	TU,
+			CXSourceRange  		Range,
+			CXToken **  		Tokens,
+			unsigned *  		NumTokens) 	
+	
+	Here, we want to test the CXToken **Tokens part. 
+	To test it, I install first a function which the signature to test, using 
+	the optCallbackCall mechanism of uFFI that allows me to install a callback as a 
+	function. 
+	Once I have the function installed, I call it and proceed to test the answer (this 
+	is the real test), and validate I can get a list of structures from the value 
+	holder"
 	| holder result |
 	
 	holder :=  FFITestStructure newValueHolder.
 	
+	"Install callback as function TestStructPointerPointerValueHolder"
 	FFICallbackFunctionResolution 
 		registerCallback: (FFICallback 
 			signature: #(int (FFITestStructure **aValue)) 
@@ -181,13 +200,16 @@ FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
 				aValue pointerAt: 1 put: allocated.
 				3 ])
 		as: #TestStructPointerPointerValueHolder.
-
+	"Call function"
 	result := self ffiMethodStructPointerPointer: holder.
 	
+	"Assert results"
 	self assert: result equals: 3.
 	self 
 		assert: ((holder arrayOfSize: 3) collect: #long) 
 		equals: #(42 43 44).
+		
+	"Free allocated value. Yes, this leaks if the test fails."
 	holder value getHandle free.
 ]
 
