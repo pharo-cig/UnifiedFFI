@@ -156,6 +156,13 @@ FFIArray class >> ofType: aTypeName size: aSize requestor: aRequestor [
 		requestor: aRequestor
 ]
 
+{ #category : 'initialization' }
+FFIArray class >> reset [
+	<script>
+	
+	DefinedTypes removeAll
+]
+
 { #category : 'private' }
 FFIArray class >> type [
 	^ type
