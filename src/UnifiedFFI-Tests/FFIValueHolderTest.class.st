@@ -54,8 +54,11 @@ FFIValueHolderTest >> ffiMethodStructure: value [
 FFIValueHolderTest >> tearDown [
 
 	self class methods
-		select: [ :each | (each selector beginsWith: 'ffi') and: [ each hasProperty: #ffiNonCompiledMethod ] ]
-		thenDo: [ :each | FFIMethodRegistry uniqueInstance resetMethod: each ].
+		select: [ :each | 
+			(each selector beginsWith: 'ffi') 
+			and: [ each hasProperty: #ffiNonCompiledMethod ] ]
+		thenDo: [ :each | 
+			FFIMethodRegistry uniqueInstance resetMethod: each ].
 	FFICallbackFunctionResolution reset.
 	
 	super tearDown
