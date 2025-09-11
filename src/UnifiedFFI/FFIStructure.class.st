@@ -239,6 +239,12 @@ FFIStructure class >> externalNew [
 	^self fromHandle: (ExternalAddress allocate: self structureSize)
 ]
 
+{ #category : 'accessing' }
+FFIStructure class >> externalTypeSize [
+
+	^ self structureSize
+]
+
 { #category : 'private' }
 FFIStructure class >> fieldSpec [
 	^ FFIExternalStructureFieldParser new
@@ -388,6 +394,12 @@ FFIStructure class >> structureAlignment [
 { #category : 'accessing' }
 FFIStructure class >> structureSize [
 	^ self byteSize
+]
+
+{ #category : 'accessing' }
+FFIStructure >> externalTypeSize [
+
+	^ self class externalTypeSize
 ]
 
 { #category : 'instance creation' }

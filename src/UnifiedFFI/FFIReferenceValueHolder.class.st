@@ -1,5 +1,5 @@
 "
-This is a special `FFIValueHolder` for referenced objects (structs, opaque objects, etc.)
+This is a special `FFIValueHolder` for referenced objects (structs, opaque objects, external objects)
 "
 Class {
 	#name : 'FFIReferenceValueHolder',
@@ -13,6 +13,14 @@ Class {
 }
 
 { #category : 'instance creation' }
+FFIReferenceValueHolder class >> newType: aType [
+
+	^ self 
+		newType: aType 
+		handle: FFIValueHolderHandle new
+]
+
+{ #category : 'instance creation' }
 FFIReferenceValueHolder class >> newType: aType size: aNumber [
 
 	^ (self newType: aType)
@@ -22,17 +30,34 @@ FFIReferenceValueHolder class >> newType: aType size: aNumber [
 
 { #category : 'accessing' }
 FFIReferenceValueHolder >> arrayOfSize: aNumber [
+			
+	^ super 
+		arrayOf: self typeClass 
+		size: aNumber
+]
+
+{ #category : 'private' }
+FFIReferenceValueHolder >> basicArrayOfType: aType size: aNumber [
 	| next |
 
-	next := ExternalAddress new 
-		adoptAddress: self getHandle;
-		yourself.
+	aType isExternalStructure 
+		ifFalse: [ ^ super basicArrayOfType: aType size: aNumber ].
+	
+	next := self firstHandle.
 	^ Array streamContents: [ :stream |
 		aNumber timesRepeat: [
 			| value |
 			value := self typeClass fromHandle: next.
 			stream nextPut: value.
 			next := next + self typeSize ] ]
+]
+
+{ #category : 'private' }
+FFIReferenceValueHolder >> firstHandle [
+
+	^ ExternalAddress new 
+		adoptAddress: self getHandle;
+		yourself
 ]
 
 { #category : 'private' }

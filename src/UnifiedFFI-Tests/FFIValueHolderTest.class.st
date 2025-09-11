@@ -15,6 +15,24 @@ FFIValueHolderTest >> ffiMethodCharPointerPointer: value [
 ]
 
 { #category : 'accessing' }
+FFIValueHolderTest >> ffiMethodExternalObject: value [
+
+	^ self 
+		ffiCall: #(int TestExternalObjectValueHolder(FFITestExternalObject *value))
+		module: 'to-test'
+		options: #(+optCallbackCall)
+]
+
+{ #category : 'accessing' }
+FFIValueHolderTest >> ffiMethodExternalObjectPointerPointer: value [
+
+	^ self 
+		ffiCall: #(int TestExternalObjectPointerPointerValueHolder(FFITestExternalObject **value))
+		module: 'to-test'
+		options: #(+optCallbackCall)
+]
+
+{ #category : 'accessing' }
 FFIValueHolderTest >> ffiMethodInt: value [
 
 	^ self 
@@ -131,6 +149,82 @@ FFIValueHolderTest >> testCallCharPointerPointerWithValueHolder [
 ]
 
 { #category : 'tests' }
+FFIValueHolderTest >> testCallExternalObjectArrayWithValueHolder [
+	"testing I can use an external object as value holder to answer an array of them.
+	 since an external object has already an arity of 1 (because they are 
+	 pointers), calling ExternalObject* should be equivallent to OpaqueObject**"
+	| holder result resultArray |
+	
+	holder :=  FFITestExternalObject newValueHolder.
+	"Install callback as function TestExternalObjectValueHolder.
+	 The callback simulates this C behavior: 
+	
+	 int TestStructPointerPointerValueHolder(FFITestExternalObject **aValue) {
+     	array = malloc(3, sizeof(FFITestExternalObject));
+     	array[0] = some_function_that_creates_a_FFITestExternalObject(42);
+     	array[1] = some_function_that_creates_a_FFITestExternalObject(43);
+     	array[2] = some_function_that_creates_a_FFITestExternalObject(44);
+     	*aValue = array;
+    	return 3;
+	 }"
+	FFICallbackFunctionResolution 
+		registerCallback: (FFICallback 
+			signature: #(int (FFITestExternalObject **aValue)) 
+			block: [ :aValue |
+				| allocated |
+				
+				allocated := ExternalAddress allocate: 3 * FFIExternalType pointerSize.
+				0 to: 2 do: [ :i |  
+					allocated 
+						pointerAt: 1 + (FFIExternalType pointerSize * i)
+						put: (ExternalAddress fromAddress: 42 + i) ].
+				aValue pointerAt: 1 put: allocated.
+				3 ])
+		as: #TestExternalObjectPointerPointerValueHolder.
+		
+	result := self ffiMethodExternalObjectPointerPointer: holder.
+
+	self assert: result equals: 3.
+	resultArray := holder arrayOfSize: 3.
+	self assert: (resultArray 
+		collect: [ :each | each getHandle asInteger ] as: Array) 
+		equals: #(42 43 44).
+	
+	(holder getHandle pointerAt: 1) free.
+]
+
+{ #category : 'tests' }
+FFIValueHolderTest >> testCallExternalObjectWithValueHolder [
+	"testing I can use an external object as value holder.
+	 since an external object has already an arity of 1 (because they are 
+	 pointers), calling ExternalObject* should be equivallent to OpaqueObject**"
+	| holder result resultObject |
+	
+	holder :=  FFITestExternalObject newValueHolder.
+	"Install callback as function TestExternalObjectValueHolder.
+	 The callback simulates this C behavior: 
+	
+	 int TestStructPointerPointerValueHolder(FFITestExternalObject *aValue) {
+     	*aValue = some_function_that_creates_a_FFITestExternalObject();
+    	return 1;
+	 }"
+	FFICallbackFunctionResolution 
+		registerCallback: (FFICallback 
+			signature: #(int (FFITestExternalObject *aValue)) 
+			block: [ :aValue |
+				aValue pointerAt: 1 put: (ExternalAddress fromAddress: 42).
+				1 ])
+		as: #TestExternalObjectValueHolder.
+		
+	result := self ffiMethodExternalObject: holder.
+
+	self assert: result equals: 1.
+	resultObject := holder value.
+	self assert: resultObject class equals: FFITestExternalObject.
+	self assert: resultObject getHandle asInteger equals: 42
+]
+
+{ #category : 'tests' }
 FFIValueHolderTest >> testCallIntPointerWithValueHolder [
 	| holder result resultIntegers |
 	
@@ -165,8 +259,9 @@ FFIValueHolderTest >> testCallIntPointerWithValueHolder [
 
 { #category : 'tests' }
 FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
-	"The test validates that a structuture can be passed to in struct** format 
-	 and the value holder will be capable of give back a list of structs. 
+	"The test validates that a structuture can be passed to a function in 
+	 struct** format and the value holder will be capable of give back a list 
+	 of structs. 
 	 This is needed, for example, on functions like clang_tokenize (libclang), 
 	 who has this signature: 
 	 
@@ -187,7 +282,17 @@ FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
 	
 	holder :=  FFITestStructure newValueHolder.
 	
-	"Install callback as function TestStructPointerPointerValueHolder"
+	"Install callback as function TestStructPointerPointerValueHolder
+	 The callback simulates this C behavior: 
+	
+	 int TestStructPointerPointerValueHolder(FFITestStructure **aValue) {
+    	FFITestStructure *array = malloc(3 * sizeof(FFITestStructure));
+    	array[0].longValue = 42;
+    	array[1].longValue = 43;
+    	array[2].longValue = 44;
+    	*aValue = array;
+    	return 3;
+	 }"
 	FFICallbackFunctionResolution 
 		registerCallback: (FFICallback 
 			signature: #(int (FFITestStructure **aValue)) 
@@ -198,7 +303,7 @@ FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
 						stream nextPutAll: (FFITestStructure new 
 							long: 42 + i;
 							getHandle) ] ].
-				allocated := ExternalAddress allocate:bytes size.
+				allocated := ExternalAddress allocate: bytes size.
 				LibC memCopy: bytes to: allocated size: bytes size.
 				aValue pointerAt: 1 put: allocated.
 				3 ])
@@ -212,7 +317,7 @@ FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
 		assert: ((holder arrayOfSize: 3) collect: #long) 
 		equals: #(42 43 44).
 		
-	"Free allocated value. Yes, this leaks if the test fails."
+	"Free allocated value. Warning, it will leak if the test fail."
 	holder value getHandle free.
 ]
 
