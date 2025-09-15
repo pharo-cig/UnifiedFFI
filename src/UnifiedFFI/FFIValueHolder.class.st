@@ -103,7 +103,7 @@ FFIValueHolder >> basicArrayOfType: aType size: aNumber [
 	next := self firstHandle.
 	^ Array streamContents: [ :stream |
 		0 to: aNumber - 1 do: [ :index |
-			| next value |
+			| value |
 			next := next + (index * aType externalTypeSize).
 			value := aType handle: next at: 1.
 			stream nextPut: value ] ]

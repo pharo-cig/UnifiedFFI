@@ -31,7 +31,7 @@ FFIReferenceValueHolder class >> newType: aType size: aNumber [
 { #category : 'accessing' }
 FFIReferenceValueHolder >> arrayOfSize: aNumber [
 			
-	^ super 
+	^ self
 		arrayOf: self typeClass 
 		size: aNumber
 ]
