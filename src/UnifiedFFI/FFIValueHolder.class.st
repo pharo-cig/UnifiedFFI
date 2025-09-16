@@ -104,9 +104,9 @@ FFIValueHolder >> basicArrayOfType: aType size: aNumber [
 	^ Array streamContents: [ :stream |
 		0 to: aNumber - 1 do: [ :index |
 			| value |
-			next := next + (index * aType externalTypeSize).
 			value := aType handle: next at: 1.
-			stream nextPut: value ] ]
+			stream nextPut: value.
+			next := next + aType externalTypeSize ] ]
 ]
 
 { #category : 'private' }

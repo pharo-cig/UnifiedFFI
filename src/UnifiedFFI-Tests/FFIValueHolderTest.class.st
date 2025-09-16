@@ -244,13 +244,13 @@ FFIValueHolderTest >> testCallIntPointerWithValueHolder [
 				integers signedLongAt: 13 put: 4.
 				integers signedLongAt: 17 put: 42.
 				aValue pointerAt: 1 put: integers.
-				1 ])
+				5 ])
 		as: #TestIntPointerValueHolder.
 
 	result := self ffiMethodIntPointer: holder.
 
-	self assert: result equals: 1.
-	resultIntegers := holder arrayOf: #int size: 5.
+	self assert: result equals: 5.
+	resultIntegers := holder arrayOf: #int size: result.
 	self 
 		assert: resultIntegers
 		equals: #(1 2 3 4 42).
