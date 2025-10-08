@@ -460,7 +460,7 @@ FFIStructure >> referenceTo [
 	"In fact, structures in uFFI are always passed by reference, then a referenceTo 
 	 it will always be itself"
 	 
-	 ^ FFITypeReference 
+	 ^ FFIValueHolder 
 	 	newType: self
 	 	handle: self getHandle
 ]
