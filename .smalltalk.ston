@@ -1,0 +1,12 @@
+SmalltalkCISpec {
+  #preLoading : '.github/scripts/preLoading.st',
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'UnifiedFFI',
+      #directory : 'src',
+      #onConflict : #useIncoming,
+      #onUpgrade : #useIncoming,
+      #ignoreImage : true
+    }
+  ]
+}
