@@ -9,10 +9,24 @@ Class {
 		'stream',
 		'fnSpec'
 	],
+	#classVars : [
+		'ParserClass'
+	],
 	#category : 'UnifiedFFI-Base',
 	#package : 'UnifiedFFI',
 	#tag : 'Base'
 }
+
+{ #category : 'accessing' }
+FFIFunctionParser class >> parserClass [
+	"Sets one time for system the parser class to be used. 
+	 This is needed to have compatibility with older versions of Pharo"
+
+	^ ParserClass ifNil: [ 
+		ParserClass := (self environment classNamed: #OCParser)
+			"Pharo12 and previous have RBParser"
+			ifNil: [ self environment classNamed: #RBParser ] ]
+]
 
 { #category : 'requestor callbacks' }
 FFIFunctionParser >> argName: argName indirectIndex: anIndex type: aTypeName ptrArity: arity [
@@ -270,6 +284,12 @@ FFIFunctionParser >> parseWord [
 					or: [ ('_$' includes: ch)
 					or: [ch isDigit] ] ] ]
 		whileTrue: [ st nextPut: stream next ] ]
+]
+
+{ #category : 'accessing' }
+FFIFunctionParser >> parserClass [
+
+	^ self class parserClass
 ]
 
 { #category : 'accessing' }
