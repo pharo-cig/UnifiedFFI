@@ -2,7 +2,7 @@ SmalltalkCISpec {
   #preLoading : '.github/scripts/preLoading.st',
   #loading : [
     SCIMetacelloLoadSpec {
-      #baseline : 'UnifiedFFI',
+      #baseline : 'UnifiedFFIFull',
       #directory : 'src',
       #onConflict : #useIncoming,
       #onUpgrade : #useIncoming,
