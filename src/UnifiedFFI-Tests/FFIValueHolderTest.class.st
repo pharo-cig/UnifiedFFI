@@ -322,6 +322,33 @@ FFIValueHolderTest >> testCallStructPointerPointerWithValueHolder [
 ]
 
 { #category : 'tests' }
+FFIValueHolderTest >> testCallStructureWithReference [
+	| struct holder result |
+	
+	struct := FFITestStructure new.
+	holder := struct referenceTo.
+	
+	"this simulates a c function like this: 
+	int aFunction(FFITestStructure *aValue) {
+		aValue->byteValue = 42;
+		return 1;
+	}"
+	FFICallbackFunctionResolution 
+		registerCallback: (FFICallback 
+			signature: #(int (void *aValue)) 
+			block: [ :aValue |
+				(FFITestStructure fromHandle: aValue) byte: 42.
+				1 ])
+		as: #TestStructureValueHolder.
+	self assert: struct byte equals: 0.
+
+	result := self ffiMethodStructure: holder.
+	
+	self assert: result equals: 1.
+	self assert: struct byte equals: 42
+]
+
+{ #category : 'tests' }
 FFIValueHolderTest >> testCallStructureWithValueHolder [
 	| holder result resultStruct |
 	
@@ -364,11 +391,12 @@ FFIValueHolderTest >> testOpaqueObjectTypeCanBeHolded [
 FFIValueHolderTest >> testStructureTypeCanBeHolded [
 	| holder |
 	
+	"a holder of the structure is the handle of the structure itself, since from the POV 
+	 of uFFI is the same to pass `AStruct arg` than `AStruct *arg` sinie the argument 
+	 mangling will be aquivalent (this maybe should be review)?" 
+	
 	holder :=  FFITestStructure newValueHolder.
 	self assert: holder type class equals: FFITestStructure.
 	self assert: (holder getHandle isKindOf: ByteArray).
-	self assert: holder getHandle size equals: FFITestStructure newBuffer size.	
-	"this can't be like this (the structure tries to be filled with the handle)"
-	"holder value: (structClass fromHandle: (ExternalAddress fromAddress: 42)).
-	self assert: holder value getHandle equals: (ExternalAddress fromAddress: 42)"
+	self assert: holder getHandle size equals: FFITestStructure structureSize
 ]

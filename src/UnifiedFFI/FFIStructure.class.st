@@ -317,9 +317,12 @@ FFIStructure class >> newBuffer [
 
 { #category : 'instance creation' }
 FFIStructure class >> newValueHolder [
-
+	| struct |
+	
+	struct := self new.
 	^ FFIReferenceValueHolder 
-		newType: self new 
+		newType: struct
+		handle: struct getHandle
 		size: self structureSize
 ]
 
@@ -450,4 +453,14 @@ FFIStructure >> printOn: aStream [
 			(self perform: field ) printOn: aStream.
 			] separatedBy: [ aStream cr ].
 	aStream cr; nextPut: $)"
+]
+
+{ #category : 'as yet unclassified' }
+FFIStructure >> referenceTo [
+	"In fact, structures in uFFI are always passed by reference, then a referenceTo 
+	 it will always be itself"
+	 
+	 ^ FFITypeReference 
+	 	newType: self
+	 	handle: self getHandle
 ]
