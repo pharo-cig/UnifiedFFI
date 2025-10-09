@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #baselines }
+BaselineOfUnifiedFFIFull >> afterLoadingPharo11 [
+
+	SystemProgressMorph enable; reset
+]
+
+{ #category : #baselines }
 BaselineOfUnifiedFFIFull >> baseline: spec [
 	<baseline>
 	
@@ -37,10 +43,21 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			group: 'uffi' with: #('UnifiedFFI-Pharo12' 'UnifiedFFI') ].
 	
 	spec for: #'pharo11.x' do: [
+		spec preLoadDoIt: #beforeLoadingPharo11.
+		spec postLoadDoIt: #afterLoadingPharo11.
 		spec 
 			package: 'UnifiedFFI-Pharo11';
 			"this one needs to be applied after loading"
 			package: 'UnifiedFFI-Pharo11-Overrides' with: [ spec requires: #('UnifiedFFI') ];
 			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo11') ];
 			group: 'uffi' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI' 'UnifiedFFI-Pharo11-Overrides') ]
+]
+
+{ #category : #baselines }
+BaselineOfUnifiedFFIFull >> beforeLoadingPharo11 [
+
+	"I need to disable SystemProgressMorph during the loading of UFFI 
+	 because the text generation uses FFI to do some operations and well... 
+	 that will not play nicely :)"
+	SystemProgressMorph disable
 ]
