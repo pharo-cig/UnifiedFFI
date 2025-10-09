@@ -30,9 +30,15 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			group: 'tffi-tests' with: #('tffi' 'ThreadedFFI-Tests' 'ThreadedFFI-UFFI-Tests');
 			group: 'all' with: #('tffi-tests' 'uffi-tests') ].
 		
-	spec for: #(#'pharo12.x' #'pharo11.x') do: [ 
+	spec for: #'pharo12.x' do: [ 
 		spec 
 			package: 'UnifiedFFI-Pharo12';
 			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo12') ];
-			group: 'uffi' with: #('UnifiedFFI-Pharo12' 'UnifiedFFI') ]
+			group: 'uffi' with: #('UnifiedFFI-Pharo12' 'UnifiedFFI') ].
+	
+	spec for: #'pharo11.x' do: [
+		spec 
+			package: 'UnifiedFFI-Pharo11';
+			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo11') ];
+			group: 'uffi' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI') ]
 ]
