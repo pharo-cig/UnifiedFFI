@@ -1,1 +1,1 @@
-Package { #name : 'UnifiedFFI-Pharo12' }
+Package { #name : #'UnifiedFFI-Pharo12' }
