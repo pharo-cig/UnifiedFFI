@@ -7,3 +7,9 @@ CompiledMethod >> sourcePointer: srcPointer [
 	self removeProperty: #source.
 	self setSourcePointer: srcPointer
 ]
+
+{ #category : #'*UnifiedFFI-Pharo11' }
+CompiledMethod >> valueWithReceiver: aReceiver [
+	<reflection: 'Message sending and code execution - Arbitrary method/primitive execution'>
+	^self receiver: aReceiver withArguments: #() executeMethod: self
+]
