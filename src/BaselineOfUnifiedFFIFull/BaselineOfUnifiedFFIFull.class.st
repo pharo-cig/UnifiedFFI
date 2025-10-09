@@ -1,11 +1,10 @@
 Class {
-	#name : 'BaselineOfUnifiedFFIFull',
-	#superclass : 'BaselineOf',
-	#category : 'BaselineOfUnifiedFFIFull',
-	#package : 'BaselineOfUnifiedFFIFull'
+	#name : #BaselineOfUnifiedFFIFull,
+	#superclass : #BaselineOf,
+	#category : #BaselineOfUnifiedFFIFull
 }
 
-{ #category : 'baselines' }
+{ #category : #baselines }
 BaselineOfUnifiedFFIFull >> baseline: spec [
 	<baseline>
 	
@@ -33,6 +32,7 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 		
 	spec for: #(#'pharo12.x' #'pharo11.x') do: [ 
 		spec 
-			package: 'UnifiedFFI-Pharo12' with: [ spec requires: #('ThreadedFFI') ];
-			group: 'uffi' with: #('UnifiedFFI' 'UnifiedFFI-Pharo12') ]
+			package: 'UnifiedFFI-Pharo12';
+			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo12') ];
+			group: 'uffi' with: #('UnifiedFFI-Pharo12' 'UnifiedFFI') ]
 ]
