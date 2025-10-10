@@ -4,6 +4,14 @@ Class {
 	#category : #BaselineOfUnifiedFFIFull
 }
 
+{ #category : #'accessing' }
+BaselineOfUnifiedFFIFull class >> project [
+	
+	^ super project
+		loadType: #atomic;
+		yourself
+]
+
 { #category : #baselines }
 BaselineOfUnifiedFFIFull >> afterLoadingPharo11 [
 
@@ -13,7 +21,7 @@ BaselineOfUnifiedFFIFull >> afterLoadingPharo11 [
 { #category : #baselines }
 BaselineOfUnifiedFFIFull >> baseline: spec [
 	<baseline>
-	
+
 	spec for: #common do: [
 
 		spec 
