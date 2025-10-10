@@ -7,5 +7,7 @@ SystemVersion current major = 11 ifTrue: [
             detect: [ :each | each name = 'UnifiedFFI' ]
             ifFound: [ :aRepository | aRepository discardChanges ] ]
     on: Warning 
-    do: [ :w | w resume ] 
+    do: [ :w | 
+        w asString printString.
+        w resume ] 
 ]
