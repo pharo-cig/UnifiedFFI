@@ -1,12 +1,15 @@
 SmalltalkCISpec {
   #preLoading : '.github/scripts/preLoading.st',
+  #preTesting : '.github/scripts/preTesting.st',
   #loading : [
     SCIMetacelloLoadSpec {
       #baseline : 'UnifiedFFIFull',
       #directory : 'src',
       #onConflict : #useIncoming,
       #onUpgrade : #useIncoming,
-      #ignoreImage : true
+      #onWarningLog: true,
+      #ignoreImage : true,
+      #registerInIceberg : true
     }
   ]
 }
