@@ -4,7 +4,7 @@ Class {
 	#category : #BaselineOfUnifiedFFIFull
 }
 
-{ #category : #'accessing' }
+{ #category : #accessing }
 BaselineOfUnifiedFFIFull class >> project [
 	
 	^ super project
@@ -12,10 +12,17 @@ BaselineOfUnifiedFFIFull class >> project [
 		yourself
 ]
 
-{ #category : #baselines }
+{ #category : #doits }
 BaselineOfUnifiedFFIFull >> afterLoadingPharo11 [
+	
+	self overrideStrictMode.
+	SystemProgressMorph enable; reset.
+]
 
-	SystemProgressMorph enable; reset
+{ #category : #doits }
+BaselineOfUnifiedFFIFull >> afterLoadingPharo12 [
+	
+	self overrideStrictMode
 ]
 
 { #category : #baselines }
@@ -38,13 +45,14 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			
 		spec 
 			group: 'default' with: #('all');
-			group: 'uffi' with: #('UnifiedFFI');
-			group: 'uffi-tests' with: #('uffi' 'UnifiedFFI-Tests');
-			group: 'tffi' with: #('ThreadedFFI' 'ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides');
-			group: 'tffi-tests' with: #('tffi' 'ThreadedFFI-Tests' 'ThreadedFFI-UFFI-Tests');
-			group: 'all' with: #('tffi-tests' 'uffi-tests') ].
+			group: 'uFFI' with: #('UnifiedFFI');
+			group: 'uFFI-Tests' with: #('uFFI' 'UnifiedFFI-Tests');
+			group: 'TFFI' with: #('ThreadedFFI' 'ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides');
+			group: 'TFFI-Tests' with: #('TFFI' 'ThreadedFFI-Tests' 'ThreadedFFI-UFFI-Tests');
+			group: 'all' with: #('TFFI-Tests' 'uFFI-Tests') ].
 		
 	spec for: #'pharo12.x' do: [ 
+		spec postLoadDoIt: #afterLoadingPharo12.
 		spec 
 			package: 'UnifiedFFI-Pharo12';
 			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo12') ];
@@ -55,17 +63,24 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 		spec postLoadDoIt: #afterLoadingPharo11.
 		spec 
 			package: 'UnifiedFFI-Pharo11';
-			"this one needs to be applied after loading"
-			package: 'UnifiedFFI-Pharo11-Overrides' with: [ spec requires: #('UnifiedFFI') ];
 			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo11') ];
-			group: 'uffi' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI' 'UnifiedFFI-Pharo11-Overrides') ]
+			group: 'uffi' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI') ]
 ]
 
-{ #category : #baselines }
+{ #category : #doits }
 BaselineOfUnifiedFFIFull >> beforeLoadingPharo11 [
 
 	"I need to disable SystemProgressMorph during the loading of UFFI 
 	 because the text generation uses FFI to do some operations and well... 
 	 that will not play nicely :)"
 	SystemProgressMorph disable
+]
+
+{ #category : #doits }
+BaselineOfUnifiedFFIFull >> overrideStrictMode [
+	
+	"Override strict mode because we did not have it in this version"
+	FFILibrary class compile: 'options
+	^ #()'.
+
 ]
