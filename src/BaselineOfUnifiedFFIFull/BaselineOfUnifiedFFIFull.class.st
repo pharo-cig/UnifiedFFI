@@ -1,10 +1,11 @@
 Class {
-	#name : #BaselineOfUnifiedFFIFull,
-	#superclass : #BaselineOf,
-	#category : #BaselineOfUnifiedFFIFull
+	#name : 'BaselineOfUnifiedFFIFull',
+	#superclass : 'BaselineOf',
+	#category : 'BaselineOfUnifiedFFIFull',
+	#package : 'BaselineOfUnifiedFFIFull'
 }
 
-{ #category : #accessing }
+{ #category : 'accessing' }
 BaselineOfUnifiedFFIFull class >> project [
 	
 	^ super project
@@ -12,20 +13,22 @@ BaselineOfUnifiedFFIFull class >> project [
 		yourself
 ]
 
-{ #category : #doits }
+{ #category : 'doits' }
 BaselineOfUnifiedFFIFull >> afterLoadingPharo11 [
 	
-	self overrideStrictMode.
+	(self class environment classNamed: #Author)
+		useAuthor: 'TheInstaller'
+		during: [ self overrideStrictMode ].
 	SystemProgressMorph enable; reset.
 ]
 
-{ #category : #doits }
+{ #category : 'doits' }
 BaselineOfUnifiedFFIFull >> afterLoadingPharo12 [
 	
 	self overrideStrictMode
 ]
 
-{ #category : #baselines }
+{ #category : 'baselines' }
 BaselineOfUnifiedFFIFull >> baseline: spec [
 	<baseline>
 
@@ -67,7 +70,7 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			group: 'uffi' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI') ]
 ]
 
-{ #category : #doits }
+{ #category : 'doits' }
 BaselineOfUnifiedFFIFull >> beforeLoadingPharo11 [
 
 	"I need to disable SystemProgressMorph during the loading of UFFI 
@@ -76,7 +79,7 @@ BaselineOfUnifiedFFIFull >> beforeLoadingPharo11 [
 	SystemProgressMorph disable
 ]
 
-{ #category : #doits }
+{ #category : 'doits' }
 BaselineOfUnifiedFFIFull >> overrideStrictMode [
 	
 	"Override strict mode because we did not have it in this version"
