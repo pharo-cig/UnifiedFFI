@@ -9,9 +9,6 @@ Class {
 		'stream',
 		'fnSpec'
 	],
-	#classVars : [
-		'ParserClass'
-	],
 	#category : 'UnifiedFFI-Base',
 	#package : 'UnifiedFFI',
 	#tag : 'Base'
@@ -21,7 +18,7 @@ Class {
 FFIFunctionParser class >> parserClass [
 	"Sets one time for system the parser class to be used. 
 	 This is needed to have compatibility with older versions of Pharo"
-
+	
 	^ OCParser
 ]
 
