@@ -455,7 +455,7 @@ FFIStructure >> printOn: aStream [
 	aStream cr; nextPut: $)"
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'converting' }
 FFIStructure >> referenceTo [
 	"In fact, structures in uFFI are always passed by reference, then a referenceTo 
 	 it will always be itself"
