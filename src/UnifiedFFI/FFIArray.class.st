@@ -175,13 +175,31 @@ FFIArray class >> type: aType 	size: elements [
 ]
 
 { #category : 'converting' }
+FFIArray >> adoptAddress: anAddress [
+
+	"we do not unbox FFIArrays, for now we skip this"
+]
+
+{ #category : 'converting' }
 FFIArray >> packToArity: arity [
 	"in fact, an FFIArray has a 'natural' arity of 1 + the arity of the contained type. 
 	Which means to box it (pack it) to an arity, first we have to substract that value."
 	| realArity |
 	
-	realArity := arity - self type naturalPointerArity.
+	realArity := arity - self typeArity.
 	^ realArity > 1
 		ifTrue: [ super packToArity: realArity ]
 		ifFalse: [ self ]
+]
+
+{ #category : 'private' }
+FFIArray >> typeArity [
+
+	^self type naturalPointerArity + self type pointerArity
+]
+
+{ #category : 'converting' }
+FFIArray >> unpackFromArity: arity [
+
+	"we do not unbox FFIArrays, for now we skip this"
 ]
