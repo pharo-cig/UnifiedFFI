@@ -83,12 +83,6 @@ TFRunner >> forCallback [
 	^ self
 ]
 
-{ #category : 'handling' }
-TFRunner >> handleExceptionDuring: aBlock [
-
-	self exceptionHandler handleExceptionDuring: aBlock
-]
-
 { #category : 'executing' }
 TFRunner >> invokeFunction: aTFExternalFunction [
 
