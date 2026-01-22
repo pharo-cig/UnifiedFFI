@@ -17,4 +17,4 @@ Metacello new
 	load.
 ```
 
-**NOTE:** `v1.2` is a stable tag, use the last release 😄
+**NOTE:** `v1.2.1` is a stable tag, use the last release 😄
