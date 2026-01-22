@@ -9,7 +9,7 @@ Is available to provide compatibility with users of older Pharo versions.
 
 ```smalltalk
 Metacello new
-	repository: 'github://pharo-cig/UnifiedFFI:v1.2';
+	repository: 'github://pharo-cig/UnifiedFFI:v1.2.1';
 	baseline: 'UnifiedFFIFull';
 	onConflict: [ :n | n useIncoming ];
 	onUpgrade: [ :n | n useIncoming ];
