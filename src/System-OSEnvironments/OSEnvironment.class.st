@@ -32,7 +32,7 @@ OSEnvironment class >> current [
 { #category : 'examples' }
 OSEnvironment class >> example [
 
-	Smalltalk os environment asDictionary inspect
+	OSEnvironment current asDictionary inspect
 ]
 
 { #category : 'converting' }

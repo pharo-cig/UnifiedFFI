@@ -109,12 +109,11 @@ FFIValueHolderTest >> testArrayOfIntegersCanBePassed [
 	"This callback simulates this C function: 
 	
 	int sum_list(const int *list, size_t size) {
-    	int sum = 0;
-   		for (size_t i = 0; i < size; i++) {
-        	sum += list[i];
-    	}
-    	return sum;
+    int sum = 0;
+    for (size_t i = 0; i < size; i++) {
+        sum += list[i];
     }
+    return sum;}
 	"
 	FFICallbackFunctionResolution 
 		registerCallback: (FFICallback 

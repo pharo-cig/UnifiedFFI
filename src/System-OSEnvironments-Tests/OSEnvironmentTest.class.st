@@ -16,7 +16,7 @@ OSEnvironmentTest >> envNameForTest [
 
 { #category : 'helper' }
 OSEnvironmentTest >> instance [
-	^ Smalltalk os environment
+	^ OSEnvironment current
 ]
 
 { #category : 'running' }

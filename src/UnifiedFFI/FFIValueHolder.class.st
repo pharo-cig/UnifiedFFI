@@ -150,12 +150,6 @@ FFIValueHolder >> pointer [
 	^ self getHandle
 ]
 
-{ #category : 'converting' }
-FFIValueHolder >> tfPointerAddress [
-
-	^ self getHandle tfPointerAddress
-]
-
 { #category : 'accessing' }
 FFIValueHolder >> type [
 

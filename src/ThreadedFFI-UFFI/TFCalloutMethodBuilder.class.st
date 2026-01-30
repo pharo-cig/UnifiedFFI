@@ -122,11 +122,11 @@ TFCalloutMethodBuilder >> emitArgument: anFFIFunctionArgument optimizingIn: buil
 TFCalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec ffiLibrary: ffiLibrary [
 
 	TFCalloutAPI isTracing ifTrue: [
-		TFCalloutAPI trace: sender.
+		TFCalloutAPI traceSender: sender.
 		builder
 			pushLiteral: TFCalloutAPI;
 			pushLiteral: sender;
-			send: #trace: ].
+			send: #traceSender: ].
 
 	builder
 		pushLiteral: (ffiLibrary uniqueInstance runner).

@@ -135,16 +135,17 @@ FFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec ffiLib
 
 { #category : 'private' }
 FFICalloutMethodBuilder >> generateMethodFromSpec: functionSpec [
-	| ir ffiLibrary properties method |
+	| ir ffiLibrary method |
 	functionSpec resolveUsing: self requestor.
 
 	ffiLibrary := self extractLibrary.
 
-	ir := self irBuilderClass buildIR: [ :builder | | r |
+	ir := self irBuilderClass buildIR: [ :builder | | r properties |
 
 		"Copy the properties of the old method"
-		sender methodProperties
-			ifNotNil: [ properties := sender methodProperties copy.
+		properties := sender compiledCode properties.
+		properties
+			ifNotNil: [ properties := properties copy.
 				properties method: nil.
 				builder properties: properties ].
 

@@ -152,12 +152,6 @@ ByteArray >> referenceStructAt: byteOffset length: length [
 ]
 
 { #category : '*UnifiedFFI' }
-ByteArray >> signedByteAt: byteOffset [
-    "Return a 8bit signed integer starting at the given byte offset"
-    ^self integerAt: byteOffset size: 1 signed: true
-]
-
-{ #category : '*UnifiedFFI' }
 ByteArray >> signedByteAt: byteOffset put: value [
 	"Store a 8bit signed integer starting at the given byte offset"
 	^self integerAt: byteOffset put: value size: 1 signed: true

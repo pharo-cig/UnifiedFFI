@@ -22,9 +22,9 @@ TFTestCase class >> testParameters [
 { #category : 'accessing' }
 TFTestCase >> libraryPath [
 
-	Smalltalk os isUnix ifTrue: [ ^ 'libTestLibrary.so' ].
-	Smalltalk os isMacOS ifTrue: [ ^ 'libTestLibrary.dylib' ].
-	Smalltalk os isWindows ifTrue: [ ^ 'TestLibrary.dll' ].
+	OSPlatform current isUnix ifTrue: [ ^ 'libTestLibrary.so' ].
+	OSPlatform current isMacOS ifTrue: [ ^ 'libTestLibrary.dylib' ].
+	OSPlatform current isWindows ifTrue: [ ^ 'TestLibrary.dll' ].
 
 	self error: 'Unsupported Platform'
 ]
