@@ -50,18 +50,19 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			
 		spec 
 			group: 'default' with: #('all');
-			group: 'UFFI' with: #('FFI-Kernel' 'UnifiedFFI');
+			group: 'kernel' with: #('FFI-Kernel'); 
+			group: 'UFFI' with: #('UnifiedFFI');
 			group: 'UFFI-Tests' with: #('uFFI' 'UnifiedFFI-Tests');
 			group: 'TFFI' with: #('ThreadedFFI' 'ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides');
 			group: 'TFFI-Tests' with: #('TFFI' 'ThreadedFFI-Tests' 'ThreadedFFI-UFFI-Tests');
-			group: 'all' with: #('TFFI-Tests' 'UFFI-Tests') ].
+			group: 'all' with: #('kernel' 'TFFI-Tests' 'UFFI-Tests') ].
 		
 	spec for: #'pharo12.x' do: [ 
 		spec postLoadDoIt: #afterLoadingPharo12.
 		spec 
 			package: 'UnifiedFFI-Pharo12';
 			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo12') ];
-			group: 'uffi' with: #('UnifiedFFI-Pharo12' 'UnifiedFFI') ].
+			group: 'UFFI' with: #('UnifiedFFI-Pharo12' 'UnifiedFFI') ].
 	
 	spec for: #'pharo11.x' do: [
 		spec preLoadDoIt: #beforeLoadingPharo11.
@@ -69,7 +70,7 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 		spec 
 			package: 'UnifiedFFI-Pharo11';
 			package: 'UnifiedFFI' with: [ spec requires: #('UnifiedFFI-Pharo11') ];
-			group: 'uffi' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI') ]
+			group: 'UFFI' with: #('UnifiedFFI-Pharo11' 'UnifiedFFI') ]
 ]
 
 { #category : 'doits' }
