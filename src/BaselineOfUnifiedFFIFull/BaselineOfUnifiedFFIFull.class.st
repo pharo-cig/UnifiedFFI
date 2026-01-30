@@ -35,6 +35,8 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 	spec for: #common do: [
 
 		spec 
+			"kernel"
+			package: 'FFI-Kernel';
 			"threaded ffi"
 			package: 'ThreadedFFI';
 			package: 'ThreadedFFI-UFFI' with: [ spec requires: #('ThreadedFFI') ];
@@ -43,16 +45,16 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			package: 'ThreadedFFI-Tests' with: [ spec requires: #('ThreadedFFI') ];
 			package: 'ThreadedFFI-UFFI-Tests' with: [ spec requires: #('ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides') ];			
 			"unified ffi"
-			package: 'UnifiedFFI';
+			package: 'UnifiedFFI' with: [ spec requires: #('FFI-Kernel') ];
 			package: 'UnifiedFFI-Tests' with: [ spec requires: #('UnifiedFFI') ].
 			
 		spec 
 			group: 'default' with: #('all');
-			group: 'uFFI' with: #('UnifiedFFI');
-			group: 'uFFI-Tests' with: #('uFFI' 'UnifiedFFI-Tests');
+			group: 'UFFI' with: #('FFI-Kernel' 'UnifiedFFI');
+			group: 'UFFI-Tests' with: #('uFFI' 'UnifiedFFI-Tests');
 			group: 'TFFI' with: #('ThreadedFFI' 'ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides');
 			group: 'TFFI-Tests' with: #('TFFI' 'ThreadedFFI-Tests' 'ThreadedFFI-UFFI-Tests');
-			group: 'all' with: #('TFFI-Tests' 'uFFI-Tests') ].
+			group: 'all' with: #('TFFI-Tests' 'UFFI-Tests') ].
 		
 	spec for: #'pharo12.x' do: [ 
 		spec postLoadDoIt: #afterLoadingPharo12.
