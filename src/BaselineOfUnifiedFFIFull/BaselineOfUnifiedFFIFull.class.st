@@ -52,7 +52,7 @@ BaselineOfUnifiedFFIFull >> baseline: spec [
 			group: 'default' with: #('all');
 			group: 'kernel' with: #('FFI-Kernel'); 
 			group: 'UFFI' with: #('UnifiedFFI');
-			group: 'UFFI-Tests' with: #('uFFI' 'UnifiedFFI-Tests');
+			group: 'UFFI-Tests' with: #('UFFI' 'UnifiedFFI-Tests');
 			group: 'TFFI' with: #('ThreadedFFI' 'ThreadedFFI-UFFI' 'ThreadedFFI-UFFI-Overrides');
 			group: 'TFFI-Tests' with: #('TFFI' 'ThreadedFFI-Tests' 'ThreadedFFI-UFFI-Tests');
 			group: 'all' with: #('kernel' 'TFFI-Tests' 'UFFI-Tests') ].
