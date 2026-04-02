@@ -22,7 +22,7 @@ FFIExternalPackedStructureTest >> testExternallyAllocatedStructure [
 		struct long: 100.
 		struct float: 1.0.
 		struct double: 2.0.
-		"struct int64: 123456789101112."
+		struct int64: 123456789101112.
 
 		struct2 := FFITestPackedStructure fromHandle: struct getHandle.
 
@@ -31,8 +31,7 @@ FFIExternalPackedStructureTest >> testExternallyAllocatedStructure [
 		self assert: struct2 long equals: 100.
 		self assert: struct2 float equals: 1.0.
 		self assert: struct2 double equals: 2.0.
-		self flag: #pharoTodo. "This is not yet implemented"
-		"self assert: (struct2 int64 = 123456789101112)."	 ]
+		self assert: struct2 int64 equals: 123456789101112 ]
 	ensure: [ struct free ]
 ]
 
@@ -48,13 +47,12 @@ FFIExternalPackedStructureTest >> testStructAccess [
 	struct long: 100.
 	struct float: 1.0.
 	struct double: 2.0.
-	self flag: #pharoTodo.	"This is not yet implemented"
-	"struct int64: 123456789101112."
+	struct int64: 123456789101112.
 
 	self assert: struct byte equals: 10.
 	self assert: struct short equals: -20.
 	self assert: struct long equals: 100.
 	self assert: struct float equals: 1.0.
-	self assert: struct double equals: 2.0
-	"self assert: (struct int64 = 123456789101112).	"
+	self assert: struct double equals: 2.0.
+	self assert: struct int64 equals: 123456789101112
 ]
