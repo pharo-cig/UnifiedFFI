@@ -18,7 +18,7 @@ TFUFFITestCase class >> isAbstract [
 TFUFFITestCase class >> testParameters [
 
 	^ ParametrizedTestMatrix new
-		forSelector: #ffiLibrary addOptions: { TFTestLibraryUsingSameThreadRunner. TFTestLibraryUsingWorker. }
+		forSelector: #ffiLibrary addOptions: { TFTestLibraryUsingSameThreadRunner. TFTestLibraryUsingWorker. TFTestLibraryUsingGILWorker. }
 ]
 
 { #category : 'accessing' }
