@@ -18,6 +18,12 @@ Class {
 	#tag : 'Worker'
 }
 
+{ #category : 'accessing' }
+TFRunner >> callbackRunningStrategy [
+
+	^ TFCallbackForkRunStrategy new
+]
+
 { #category : 'errors' }
 TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
 
@@ -75,12 +81,6 @@ TFRunner >> executeCallback: aCallbackInvocation [
 
 	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
 	aCallbackInvocation callback runStrategy executeCallback: aCallbackInvocation on: self
-]
-
-{ #category : 'accessing' }
-TFRunner >> callbackRunningStrategy [
-
-	^ TFCallbackForkRunStrategy new
 ]
 
 { #category : 'accessing' }

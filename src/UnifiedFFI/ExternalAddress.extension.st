@@ -143,6 +143,25 @@ ExternalAddress >> pointerAutoRelease [
 ]
 
 { #category : '*UnifiedFFI' }
+ExternalAddress >> readArrayOf: aType size: count [
+	"Reads and returns an array of aType of the specified size."
+
+	| externalType |
+	"resolve type if needed"
+	externalType := aType isString
+		ifTrue: [ FFIExternalType resolveType: aType ]
+		ifFalse: [ aType ].
+
+	"then build the array"
+	^ Array streamContents: [ :strean |
+		| address |
+		address := self.
+		1 to: count do: [ :index |
+			strean nextPut: (externalType handle: address at: 1).
+			address := address + externalType typeSize ] ]
+]
+
+{ #category : '*UnifiedFFI' }
 ExternalAddress >> readArrayOf: aType until: aBlock [
 	"Reads an array of aType until aBlock returns true.
 	 this is an util to extract arrays from answers style char ** or int*, etc.

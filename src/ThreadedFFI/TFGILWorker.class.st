@@ -26,11 +26,28 @@ TFGILWorker >> callbackRunningStrategy [
 ]
 
 { #category : 'executing' }
-TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
+TFGILWorker >> defer: aBlock [
 
-	<primitive: 'primitiveGILWorkerCallout' error: ec>
+	| resultHolder deferredProcess |
+	resultHolder := Array new: 2.
+	deferredProcess := [
+		[ 
+			resultHolder
+				at: 1 put: true;
+				at: 2 put: aBlock value ]
+				on: Exception do: [ :e |
+					resultHolder
+						at: 1 put: false;
+						at: 2 put: e ].
+		self primitiveLeaveGILWorkerContext ] 
+	newProcess.
 
-	self primitiveFailed
+	self primitiveGILWorkerDeferProcess: deferredProcess.
+
+	resultHolder first
+		ifTrue: [ ^ resultHolder second ].
+
+	resultHolder second signal
 ]
 
 { #category : 'executing' }
@@ -40,41 +57,17 @@ TFGILWorker >> ensureDirectCallbackProcessRegistered [
 ]
 
 { #category : 'executing' }
-TFGILWorker >> defer: aBlock [
+TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
-	| resultHolder deferredProcess |
-	resultHolder := Array new: 2.
-	deferredProcess := [
-		[ resultHolder
-			at: 1 put: true;
-			at: 2 put: aBlock value ]
-			on: Exception
-			do: [ :ex |
-				resultHolder
-					at: 1 put: false;
-					at: 2 put: ex ].
-		self primitiveLeaveGILWorkerContext ] newProcess.
+	<primitive: 'primitiveGILWorkerCallout' error: ec>
 
-	self primitiveGILWorkerDeferProcess: deferredProcess.
-
-	(resultHolder at: 1)
-		ifTrue: [ ^ resultHolder at: 2 ].
-
-	(resultHolder at: 2) signal
+	self primitiveFailed
 ]
 
 { #category : 'testing' }
 TFGILWorker >> isInGILWorkerContext [
 
 	<primitive: 'primitiveIsInGILWorkerContext' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'executing' }
-TFGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
-
-	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>
 
 	self primitiveFailed
 ]
@@ -91,6 +84,14 @@ TFGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
 TFGILWorker >> primitiveLeaveGILWorkerContext [
 
 	<primitive: 'primitiveLeaveGILWorkerContext' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'executing' }
+TFGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
+
+	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>
 
 	self primitiveFailed
 ]

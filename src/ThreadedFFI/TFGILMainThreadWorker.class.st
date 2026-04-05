@@ -16,6 +16,12 @@ Class {
 	#tag : 'Worker'
 }
 
+{ #category : 'accessing' }
+TFGILMainThreadWorker class >> default [
+
+	^ self uniqueInstance
+]
+
 { #category : 'testing' }
 TFGILMainThreadWorker class >> isAvailable [
 
@@ -29,12 +35,6 @@ TFGILMainThreadWorker class >> uniqueInstance [
 
 	self isAvailable ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
 	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
-]
-
-{ #category : 'accessing' }
-TFGILMainThreadWorker class >> default [
-
-	^ self uniqueInstance
 ]
 
 { #category : 'private' }
