@@ -42,15 +42,12 @@ TFGILWorker >> defer: aBlock [
 					at: 2 put: ex ].
 		self primitiveLeaveGILWorkerContext ] newProcess.
 
-	[
-		self primitiveGILWorkerDeferProcess: deferredProcess.
+	self primitiveGILWorkerDeferProcess: deferredProcess.
 
-		(resultHolder at: 1)
-			ifTrue: [ ^ resultHolder at: 2 ].
+	(resultHolder at: 1)
+		ifTrue: [ ^ resultHolder at: 2 ].
 
-		(resultHolder at: 2) signal
-	] ensure: [
-		deferredProcess isTerminated ifFalse: [ deferredProcess terminate ] ]
+	(resultHolder at: 2) signal
 ]
 
 { #category : 'executing' }
