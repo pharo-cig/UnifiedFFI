@@ -18,12 +18,6 @@ TFGILWorker class >> default [
 	^ self named: 'default-gil'
 ]
 
-{ #category : 'accessing' }
-TFGILWorker >> callbackRunningStrategy [
-
-	^ TFGILWorkerCallbackRunStrategy new
-]
-
 { #category : 'executing' }
 TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
