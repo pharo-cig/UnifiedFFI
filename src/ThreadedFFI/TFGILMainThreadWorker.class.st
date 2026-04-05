@@ -34,7 +34,10 @@ TFGILMainThreadWorker class >> isAvailable [
 TFGILMainThreadWorker class >> uniqueInstance [
 
 	self isAvailable ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
-	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
+	^ uniqueInstance ifNil: [
+		uniqueInstance := self new
+			name: 'main-thread-gil';
+			yourself ]
 ]
 
 { #category : 'private' }
@@ -42,7 +45,8 @@ TFGILMainThreadWorker >> doInitialize [
 
 	super doInitialize.
 	MainThreadHandle := self workerAddress.
-	handle := MainThreadHandle
+	handle := MainThreadHandle.
+	self applyThreadName
 ]
 
 { #category : 'private' }

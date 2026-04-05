@@ -64,7 +64,16 @@ TFWorker class >> named: aName [
 TFWorker >> doInitialize [
 
 	super doInitialize.
-	self primitiveCreateWorker
+	self primitiveCreateWorker.
+	self applyThreadName
+]
+
+{ #category : 'private' }
+TFWorker >> applyThreadName [
+
+	name ifNil: [ ^ self ].
+	self isNull ifTrue: [ ^ self ].
+	self primitiveSetWorkerName: name
 ]
 
 { #category : 'executing' }
@@ -91,7 +100,8 @@ TFWorker >> name [
 { #category : 'accessing' }
 TFWorker >> name: aName [
 
-	name := aName
+	name := aName.
+	self isNull ifFalse: [ self applyThreadName ]
 ]
 
 { #category : 'private' }
@@ -108,6 +118,14 @@ TFWorker >> newSemaphorePool [
 TFWorker >> primitiveCreateWorker [
 
 	<primitive: 'primitiveCreateWorker'>
+
+	^ self primitiveFailed
+]
+
+{ #category : 'private' }
+TFWorker >> primitiveSetWorkerName: aString [
+
+	<primitive: 'primitiveSetWorkerName'>
 
 	^ self primitiveFailed
 ]
