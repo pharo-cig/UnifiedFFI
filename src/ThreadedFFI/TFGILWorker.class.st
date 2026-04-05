@@ -19,3 +19,46 @@ TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usi
 
 	self primitiveFailed
 ]
+
+{ #category : 'executing' }
+TFGILWorker >> defer: aBlock [
+
+	| resultHolder deferredProcess |
+	resultHolder := Array new: 2.
+	deferredProcess := [
+		[ resultHolder
+			at: 1 put: true;
+			at: 2 put: aBlock value ]
+			on: Exception
+			do: [ :ex |
+				resultHolder
+					at: 1 put: false;
+					at: 2 put: ex ].
+		self primitiveLeaveGILWorkerContext ] newProcess.
+
+	[
+		self primitiveGILWorkerDeferProcess: deferredProcess.
+
+		(resultHolder at: 1)
+			ifTrue: [ ^ resultHolder at: 2 ].
+
+		(resultHolder at: 2) signal
+	] ensure: [
+		deferredProcess isTerminated ifFalse: [ deferredProcess terminate ] ]
+]
+
+{ #category : 'executing' }
+TFGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
+
+	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'executing' }
+TFGILWorker >> primitiveLeaveGILWorkerContext [
+
+	<primitive: 'primitiveLeaveGILWorkerContext' error: ec>
+
+	self primitiveFailed
+]
