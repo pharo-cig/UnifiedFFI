@@ -18,12 +18,25 @@ TFGILWorker class >> default [
 	^ self named: 'default-gil'
 ]
 
+{ #category : 'accessing' }
+TFGILWorker >> callbackRunningStrategy [
+
+	self ensureDirectCallbackProcessRegistered.
+	^ TFCallbackSameProcessRunStrategy uniqueInstance
+]
+
 { #category : 'executing' }
 TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
 	<primitive: 'primitiveGILWorkerCallout' error: ec>
 
 	self primitiveFailed
+]
+
+{ #category : 'executing' }
+TFGILWorker >> ensureDirectCallbackProcessRegistered [
+
+	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance callbackProcess
 ]
 
 { #category : 'executing' }
@@ -54,6 +67,14 @@ TFGILWorker >> defer: aBlock [
 TFGILWorker >> isInGILWorkerContext [
 
 	<primitive: 'primitiveIsInGILWorkerContext' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'executing' }
+TFGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
+
+	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>
 
 	self primitiveFailed
 ]
