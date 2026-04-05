@@ -12,6 +12,12 @@ Class {
 	#tag : 'Worker'
 }
 
+{ #category : 'accessing' }
+TFGILWorker class >> default [
+
+	^ self named: 'default-gil'
+]
+
 { #category : 'executing' }
 TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
