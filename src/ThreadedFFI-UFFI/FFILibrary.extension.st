@@ -3,7 +3,7 @@ Extension { #name : 'FFILibrary' }
 { #category : '*ThreadedFFI-UFFI' }
 FFILibrary >> callbackRunningStrategy [
 
-	^ TFCallbackForkRunStrategy new
+	^ self runner callbackRunningStrategy
 ]
 
 { #category : '*ThreadedFFI-UFFI' }

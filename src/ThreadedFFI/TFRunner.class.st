@@ -78,6 +78,12 @@ TFRunner >> executeCallback: aCallbackInvocation [
 ]
 
 { #category : 'accessing' }
+TFRunner >> callbackRunningStrategy [
+
+	^ TFCallbackForkRunStrategy new
+]
+
+{ #category : 'accessing' }
 TFRunner >> forCallback [
 
 	^ self

@@ -18,6 +18,12 @@ TFGILWorker class >> default [
 	^ self named: 'default-gil'
 ]
 
+{ #category : 'accessing' }
+TFGILWorker >> callbackRunningStrategy [
+
+	^ TFGILWorkerCallbackRunStrategy new
+]
+
 { #category : 'executing' }
 TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
@@ -48,6 +54,14 @@ TFGILWorker >> defer: aBlock [
 		ifTrue: [ ^ resultHolder at: 2 ].
 
 	(resultHolder at: 2) signal
+]
+
+{ #category : 'testing' }
+TFGILWorker >> isInGILWorkerContext [
+
+	<primitive: 'primitiveIsInGILWorkerContext' error: ec>
+
+	self primitiveFailed
 ]
 
 { #category : 'executing' }
