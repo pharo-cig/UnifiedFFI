@@ -101,6 +101,15 @@ TFWorker >> primitiveCreateWorker [
 ]
 
 { #category : 'private' }
+TFWorker >> primitivePerformWorkerCall: aTFExternalFunction
+		withArguments: argumentHolder
+		withReturnHolder: aReturnHolder
+		usingSemaphore: anInteger [
+
+	^ self shouldNotImplement
+]
+
+{ #category : 'private' }
 TFWorker >> primitiveReleaseWorker [
 
 	<primitive: 'primitiveReleaseWorker'>

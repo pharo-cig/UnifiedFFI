@@ -19,18 +19,18 @@ Class {
 	#tag : 'Worker'
 }
 
-{ #category : 'accessing' }
-TFRunner >> callbackRunningStrategy [
-
-	^ TFCallbackForkRunStrategy new
-]
-
 { #category : 'private' }
 TFRunner >> applyThreadName [
 
 	name ifNil: [ ^ self ].
 	self isNull ifTrue: [ ^ self ].
 	self primitiveSetWorkerName: name
+]
+
+{ #category : 'accessing' }
+TFRunner >> callbackRunningStrategy [
+
+	^ TFCallbackForkRunStrategy new
 ]
 
 { #category : 'errors' }
@@ -98,12 +98,6 @@ TFRunner >> forCallback [
 	^ self
 ]
 
-{ #category : 'testing' }
-TFRunner >> isGILWorker [
-
-	^ false
-]
-
 { #category : 'errors' }
 TFRunner >> handleExceptionDuring: aBlock [
 
@@ -122,6 +116,12 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 	^ (TFPooledExternalAsyncCall forFunction: aTFExternalFunction)
 		parameters: aCollection;
 		executeOn: self
+]
+
+{ #category : 'testing' }
+TFRunner >> isGILWorker [
+
+	^ false
 ]
 
 { #category : 'accessing' }

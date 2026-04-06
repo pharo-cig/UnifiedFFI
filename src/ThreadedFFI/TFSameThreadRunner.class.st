@@ -14,13 +14,15 @@ Class {
 }
 
 { #category : 'accessing' }
+TFSameThreadRunner class >> runnerName [
+
+	^ 'VM Thread'
+]
+
+{ #category : 'accessing' }
 TFSameThreadRunner class >> uniqueInstance [
 
-	^ uniqueInstance ifNil: [
-		uniqueInstance := self basicNew
-			name: 'Same Thread';
-			initialize;
-			yourself ]
+	^ uniqueInstance ifNil: [ uniqueInstance := self new ]
 ]
 
 { #category : 'executing' }
@@ -29,6 +31,13 @@ TFSameThreadRunner >> doInitialize [
 	super doInitialize.
 	handle := self primitiveGetRunnerAddress.
 	self applyThreadName
+]
+
+{ #category : 'initialization' }
+TFSameThreadRunner >> initialize [ 
+
+	name := self class runnerName.
+	super initialize
 ]
 
 { #category : 'executing' }
@@ -52,4 +61,13 @@ TFSameThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction withArgume
 	<primitive: 'primitiveSameThreadCallout' error: ec>
 
 	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFSameThreadRunner >> primitivePerformWorkerCall: aTFExternalFunction
+		withArguments: argumentHolder
+		withReturnHolder: aReturnHolder
+		usingSemaphore: anInteger [
+
+	^ self shouldNotImplement
 ]

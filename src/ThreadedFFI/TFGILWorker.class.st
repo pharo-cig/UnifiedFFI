@@ -29,6 +29,14 @@ TFGILWorker class >> named: aName [
 	^ worker
 ]
 
+{ #category : 'private' }
+TFGILWorker >> applyThreadName [
+
+	name ifNil: [ ^ self ].
+	self isNull ifTrue: [ ^ self ].
+	self primitiveSetWorkerName: name, ' (GIL)'
+]
+
 { #category : 'executing' }
 TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 

@@ -7,9 +7,6 @@ Class {
 	#superclass : 'TFMainThreadRunner',
 	#traits : 'TFTGILWorker',
 	#classTraits : 'TFTGILWorker classTrait',
-	#classInstVars : [
-		'uniqueInstance'
-	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
 	#tag : 'Worker'
@@ -30,22 +27,18 @@ TFGILMainThreadWorker class >> isAvailable [
 ]
 
 { #category : 'accessing' }
-TFGILMainThreadWorker class >> uniqueInstance [
+TFGILMainThreadWorker class >> runnerName [
 
-	self isAvailable ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
-	^ uniqueInstance ifNil: [
-		uniqueInstance := self new
-			name: 'Main Thread GIL';
-			yourself ]
+	^ 'Main Thread (GIL)'
 ]
 
-{ #category : 'private' }
-TFGILMainThreadWorker >> doInitialize [
+{ #category : 'accessing' }
+TFGILMainThreadWorker class >> uniqueInstance [
 
-	super doInitialize.
-	MainThreadHandle := self workerAddress.
-	handle := MainThreadHandle.
-	self applyThreadName
+	self isAvailable 
+		ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
+	
+	^ uniqueInstance ifNil: [ uniqueInstance := self new ]
 ]
 
 { #category : 'private' }

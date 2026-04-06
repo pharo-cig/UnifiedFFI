@@ -17,13 +17,16 @@ Class {
 }
 
 { #category : 'accessing' }
+TFMainThreadRunner class >> runnerName [
+
+	^ 'Main Thread'
+]
+
+{ #category : 'accessing' }
 TFMainThreadRunner class >> uniqueInstance [
 
 	^ uniqueInstance ifNil: [
-		uniqueInstance := self basicNew
-			name: 'Main Thread';
-			initialize;
-			yourself ]
+		uniqueInstance := self new ]
 ]
 
 { #category : 'private' }
@@ -40,6 +43,13 @@ TFMainThreadRunner >> executeFunction: aTFExternalFunction withArguments: argume
 	<primitive: 'primitiveWorkerCallout' error: ec>
 
 	self primitiveFailed
+]
+
+{ #category : 'initialization' }
+TFMainThreadRunner >> initialize [
+
+	name := self class runnerName.
+	super initialize
 ]
 
 { #category : 'private' }
