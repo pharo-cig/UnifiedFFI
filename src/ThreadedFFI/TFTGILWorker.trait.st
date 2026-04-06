@@ -26,6 +26,14 @@ TFTGILWorker >> callbackRunningStrategy [
 	^ TFCallbackForkRunStrategy new
 ]
 
+{ #category : 'accessing' }
+TFTGILWorker >> forCallback [
+
+	^ callbackRunner ifNil: [
+		callbackRunner := TFCallbackWorkerProxy
+			forHandle: self primitiveGetGILWorkerInnerAddress ]
+]
+
 { #category : 'executing' }
 TFTGILWorker >> defer: aBlock [
 	| resultHolder deferredProcess |
@@ -82,6 +90,14 @@ TFTGILWorker >> isInGILWorkerContext [
 TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
 
 	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> primitiveGetGILWorkerInnerAddress [
+
+	<primitive: 'primitiveGetGILWorkerInnerAddress' error: ec>
 
 	self primitiveFailed
 ]

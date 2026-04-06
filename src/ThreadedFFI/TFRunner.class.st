@@ -8,6 +8,7 @@ Class {
 	#superclass : 'FFIExternalReference',
 	#instVars : [
 		'name',
+		'callbackRunner',
 		'callbackInvocationStack',
 		'stackProtect',
 		'exceptionHandler',
