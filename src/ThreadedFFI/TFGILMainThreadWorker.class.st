@@ -38,7 +38,7 @@ TFGILMainThreadWorker class >> uniqueInstance [
 	self isAvailable 
 		ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
 	
-	^ uniqueInstance ifNil: [ uniqueInstance := self new ]
+	^ super uniqueInstance
 ]
 
 { #category : 'private' }

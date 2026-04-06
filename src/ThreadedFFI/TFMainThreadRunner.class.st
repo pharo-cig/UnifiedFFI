@@ -25,8 +25,7 @@ TFMainThreadRunner class >> runnerName [
 { #category : 'accessing' }
 TFMainThreadRunner class >> uniqueInstance [
 
-	^ uniqueInstance ifNil: [
-		uniqueInstance := self new ]
+	^ uniqueInstance ifNil: [ uniqueInstance := self new ]
 ]
 
 { #category : 'private' }
