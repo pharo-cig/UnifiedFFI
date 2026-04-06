@@ -38,7 +38,7 @@ TFTGILWorker >> defer: aBlock [
 	resultHolder first
 		ifTrue: [ ^ resultHolder second ].
 
-	resultHolder second debug
+	resultHolder second signal
 ]
 
 { #category : 'private' }
