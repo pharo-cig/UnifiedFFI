@@ -8,6 +8,14 @@ Trait {
 	#tag : 'Worker'
 }
 
+{ #category : 'private' }
+TFTGILWorker >> applyThreadName [
+
+	name ifNil: [ ^ self ].
+	self isNull ifTrue: [ ^ self ].
+	self primitiveSetGILWorkerName: name
+]
+
 { #category : 'accessing' }
 TFTGILWorker >> callbackRunningStrategy [
 
@@ -71,6 +79,14 @@ TFTGILWorker >> isInGILWorkerContext [
 TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
 
 	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> primitiveSetGILWorkerName: aString [
+
+	<primitive: 'primitiveSetGILWorkerName'>
 
 	self primitiveFailed
 ]
