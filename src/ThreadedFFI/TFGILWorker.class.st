@@ -7,6 +7,8 @@ only one such worker holds it at a given moment.
 Class {
 	#name : 'TFGILWorker',
 	#superclass : 'TFWorker',
+	#traits : 'TFTGILWorker',
+	#classTraits : 'TFTGILWorker classTrait',
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
 	#tag : 'Worker'
@@ -27,81 +29,10 @@ TFGILWorker class >> named: aName [
 	^ worker
 ]
 
-{ #category : 'accessing' }
-TFGILWorker >> callbackRunningStrategy [
-
-	self ensureDirectCallbackProcessRegistered.
-	^ TFCallbackForkRunStrategy new
-]
-
-{ #category : 'executing' }
-TFGILWorker >> defer: aBlock [
-
-	| resultHolder deferredProcess |
-	self ensureInitialized.
-	resultHolder := Array new: 2.
-	deferredProcess := [
-		[ 
-			resultHolder
-				at: 1 put: true;
-				at: 2 put: aBlock value ]
-				on: Exception do: [ :e |
-					resultHolder
-						at: 1 put: false;
-						at: 2 put: e ].
-		self primitiveLeaveGILWorkerContext ] 
-	newProcess.
-
-	self primitiveGILWorkerDeferProcess: deferredProcess.
-
-	resultHolder first
-		ifTrue: [ ^ resultHolder second ].
-
-	resultHolder second signal
-]
-
-{ #category : 'executing' }
-TFGILWorker >> ensureDirectCallbackProcessRegistered [
-
-	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance callbackProcess
-]
-
 { #category : 'executing' }
 TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
 	<primitive: 'primitiveGILWorkerCallout' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'testing' }
-TFGILWorker >> isInGILWorkerContext [
-
-	<primitive: 'primitiveIsInGILWorkerContext' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'executing' }
-TFGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
-
-	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'executing' }
-TFGILWorker >> primitiveLeaveGILWorkerContext [
-
-	<primitive: 'primitiveLeaveGILWorkerContext' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'executing' }
-TFGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
-
-	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>
 
 	self primitiveFailed
 ]

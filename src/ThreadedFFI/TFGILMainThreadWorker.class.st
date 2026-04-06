@@ -4,9 +4,11 @@ It is only available when the VM was started with --gil-worker.
 "
 Class {
 	#name : 'TFGILMainThreadWorker',
-	#superclass : 'TFGILWorker',
-	#classVars : [
-		'MainThreadHandle'
+	#superclass : 'TFMainThreadRunner',
+	#traits : 'TFTGILWorker',
+	#classTraits : 'TFTGILWorker classTrait',
+	#instVars : [
+		'name'
 	],
 	#classInstVars : [
 		'uniqueInstance'
@@ -50,9 +52,38 @@ TFGILMainThreadWorker >> doInitialize [
 ]
 
 { #category : 'private' }
+TFGILMainThreadWorker >> applyThreadName [
+
+	name ifNil: [ ^ self ].
+	self isNull ifTrue: [ ^ self ].
+	self primitiveSetWorkerName: name
+]
+
+{ #category : 'accessing' }
+TFGILMainThreadWorker >> name [
+
+	^ name
+]
+
+{ #category : 'accessing' }
+TFGILMainThreadWorker >> name: aName [
+
+	name := aName.
+	self isNull ifFalse: [ self applyThreadName ]
+]
+
+{ #category : 'private' }
 TFGILMainThreadWorker >> primitiveCreateWorker [
 
 	^ self
+]
+
+{ #category : 'private' }
+TFGILMainThreadWorker >> primitiveSetWorkerName: aString [
+
+	<primitive: 'primitiveSetWorkerName'>
+
+	^ self primitiveFailed
 ]
 
 { #category : 'private' }

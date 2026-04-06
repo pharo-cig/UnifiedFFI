@@ -89,6 +89,12 @@ TFRunner >> forCallback [
 	^ self
 ]
 
+{ #category : 'testing' }
+TFRunner >> isGILWorker [
+
+	^ false
+]
+
 { #category : 'errors' }
 TFRunner >> handleExceptionDuring: aBlock [
 
