@@ -10,6 +10,7 @@ Class {
 		'callbacksByAddress',
 		'pendingQueue',
 		'callbackProcess',
+		'directCallbackProcess',
 		'mutex'
 	],
 	#classVars : [
@@ -71,6 +72,24 @@ TFCallbackQueue class >> uniqueInstance [
 { #category : 'accessing' }
 TFCallbackQueue >> callbackProcess [
 	^ callbackProcess
+]
+
+{ #category : 'accessing' }
+TFCallbackQueue >> directCallbackProcess [
+
+	(directCallbackProcess isNotNil and: [ directCallbackProcess isTerminated not ])
+		ifTrue: [ ^ directCallbackProcess ].
+
+	directCallbackProcess := [
+		[ true ] whileTrue: [
+			[self executeCallback: self nextPendingCallback]
+				on: Exception
+				fork: [ :ex | ex pass ].
+			Processor activeProcess suspend ] ]
+		forkAt: Processor highIOPriority
+		named: 'Direct callback queue'.
+
+	^ directCallbackProcess
 ]
 
 { #category : 'operations' }
@@ -214,7 +233,11 @@ TFCallbackQueue >> startUp [
 { #category : 'initialization' }
 TFCallbackQueue >> terminateProcess [
 
-	callbackProcess ifNil: [ ^ self ].
-	callbackProcess terminate.
-	callbackProcess := nil
+	callbackProcess ifNotNil: [
+		callbackProcess terminate.
+		callbackProcess := nil ].
+
+	directCallbackProcess ifNotNil: [
+		directCallbackProcess terminate.
+		directCallbackProcess := nil ]
 ]

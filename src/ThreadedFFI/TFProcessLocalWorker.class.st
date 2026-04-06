@@ -108,7 +108,7 @@ TFProcessLocalWorker >> ensureInitialized [
 { #category : 'accessing' }
 TFProcessLocalWorker >> forCallback [
 
-	^ self worker
+	^ self worker forCallback
 ]
 
 { #category : 'executing' }

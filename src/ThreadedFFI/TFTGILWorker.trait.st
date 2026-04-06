@@ -63,7 +63,7 @@ TFTGILWorker >> defer: aBlock [
 { #category : 'private' }
 TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 
-	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance callbackProcess
+	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance directCallbackProcess
 ]
 
 { #category : 'private' }
