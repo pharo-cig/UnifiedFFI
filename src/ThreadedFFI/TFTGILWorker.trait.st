@@ -3,6 +3,9 @@ I provide GIL-specific worker behavior shared by GIL-capable runners.
 "
 Trait {
 	#name : 'TFTGILWorker',
+	#instVars : [
+		'name'
+	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
 	#tag : 'Worker'
@@ -13,7 +16,7 @@ TFTGILWorker >> applyThreadName [
 
 	name ifNil: [ ^ self ].
 	self isNull ifTrue: [ ^ self ].
-	self primitiveSetGILWorkerName: name
+	self primitiveSetGILWorkerName: name, ' (GIL)'
 ]
 
 { #category : 'accessing' }
@@ -84,14 +87,6 @@ TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
 ]
 
 { #category : 'private' }
-TFTGILWorker >> primitiveSetGILWorkerName: aString [
-
-	<primitive: 'primitiveSetGILWorkerName'>
-
-	self primitiveFailed
-]
-
-{ #category : 'private' }
 TFTGILWorker >> primitiveLeaveGILWorkerContext [
 
 	<primitive: 'primitiveLeaveGILWorkerContext' error: ec>
@@ -103,6 +98,14 @@ TFTGILWorker >> primitiveLeaveGILWorkerContext [
 TFTGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
 
 	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> primitiveSetGILWorkerName: aString [
+
+	<primitive: 'primitiveSetGILWorkerName'>
 
 	self primitiveFailed
 ]
