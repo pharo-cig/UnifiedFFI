@@ -19,6 +19,15 @@ TFGILWorker class >> default [
 ]
 
 { #category : 'accessing' }
+TFGILWorker class >> named: aName [
+
+	| worker |
+	worker := super named: aName.
+	worker ensureInitialized.
+	^ worker
+]
+
+{ #category : 'accessing' }
 TFGILWorker >> callbackRunningStrategy [
 
 	self ensureDirectCallbackProcessRegistered.
@@ -29,6 +38,7 @@ TFGILWorker >> callbackRunningStrategy [
 TFGILWorker >> defer: aBlock [
 
 	| resultHolder deferredProcess |
+	self ensureInitialized.
 	resultHolder := Array new: 2.
 	deferredProcess := [
 		[ 
