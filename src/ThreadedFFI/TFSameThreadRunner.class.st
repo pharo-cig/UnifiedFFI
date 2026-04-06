@@ -16,14 +16,19 @@ Class {
 { #category : 'accessing' }
 TFSameThreadRunner class >> uniqueInstance [
 
-	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
+	^ uniqueInstance ifNil: [
+		uniqueInstance := self basicNew
+			name: 'Same Thread';
+			initialize;
+			yourself ]
 ]
 
 { #category : 'executing' }
 TFSameThreadRunner >> doInitialize [
 
 	super doInitialize.
-	handle := self primitiveGetRunnerAddress
+	handle := self primitiveGetRunnerAddress.
+	self applyThreadName
 ]
 
 { #category : 'executing' }

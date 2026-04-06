@@ -7,6 +7,7 @@ Class {
 	#name : 'TFRunner',
 	#superclass : 'FFIExternalReference',
 	#instVars : [
+		'name',
 		'callbackInvocationStack',
 		'stackProtect',
 		'exceptionHandler',
@@ -22,6 +23,14 @@ Class {
 TFRunner >> callbackRunningStrategy [
 
 	^ TFCallbackForkRunStrategy new
+]
+
+{ #category : 'private' }
+TFRunner >> applyThreadName [
+
+	name ifNil: [ ^ self ].
+	self isNull ifTrue: [ ^ self ].
+	self primitiveSetWorkerName: name
 ]
 
 { #category : 'errors' }
@@ -115,6 +124,19 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 		executeOn: self
 ]
 
+{ #category : 'accessing' }
+TFRunner >> name [
+
+	^ name
+]
+
+{ #category : 'accessing' }
+TFRunner >> name: aName [
+
+	name := aName.
+	self isNull ifFalse: [ self applyThreadName ]
+]
+
 { #category : 'private' }
 TFRunner >> newSemaphorePool [
 
@@ -131,6 +153,14 @@ TFRunner >> primitivePerformWorkerCall: aTFExternalFunction
 		usingSemaphore: anInteger [
 
 	^ self subclassResponsibility
+]
+
+{ #category : 'private' }
+TFRunner >> primitiveSetWorkerName: aString [
+
+	<primitive: 'primitiveSetWorkerName'>
+
+	^ self primitiveFailed
 ]
 
 { #category : 'executing' }

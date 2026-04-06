@@ -7,9 +7,6 @@ Class {
 	#superclass : 'TFMainThreadRunner',
 	#traits : 'TFTGILWorker',
 	#classTraits : 'TFTGILWorker classTrait',
-	#instVars : [
-		'name'
-	],
 	#classInstVars : [
 		'uniqueInstance'
 	],
@@ -38,7 +35,7 @@ TFGILMainThreadWorker class >> uniqueInstance [
 	self isAvailable ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
 	^ uniqueInstance ifNil: [
 		uniqueInstance := self new
-			name: 'main-thread-gil';
+			name: 'Main Thread GIL';
 			yourself ]
 ]
 
@@ -52,38 +49,9 @@ TFGILMainThreadWorker >> doInitialize [
 ]
 
 { #category : 'private' }
-TFGILMainThreadWorker >> applyThreadName [
-
-	name ifNil: [ ^ self ].
-	self isNull ifTrue: [ ^ self ].
-	self primitiveSetWorkerName: name
-]
-
-{ #category : 'accessing' }
-TFGILMainThreadWorker >> name [
-
-	^ name
-]
-
-{ #category : 'accessing' }
-TFGILMainThreadWorker >> name: aName [
-
-	name := aName.
-	self isNull ifFalse: [ self applyThreadName ]
-]
-
-{ #category : 'private' }
 TFGILMainThreadWorker >> primitiveCreateWorker [
 
 	^ self
-]
-
-{ #category : 'private' }
-TFGILMainThreadWorker >> primitiveSetWorkerName: aString [
-
-	<primitive: 'primitiveSetWorkerName'>
-
-	^ self primitiveFailed
 ]
 
 { #category : 'private' }

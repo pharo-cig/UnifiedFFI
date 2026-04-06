@@ -19,7 +19,11 @@ Class {
 { #category : 'accessing' }
 TFMainThreadRunner class >> uniqueInstance [
 
-	^ uniqueInstance ifNil: [ uniqueInstance := self basicNew initialize ]
+	^ uniqueInstance ifNil: [
+		uniqueInstance := self basicNew
+			name: 'Main Thread';
+			initialize;
+			yourself ]
 ]
 
 { #category : 'private' }
@@ -27,7 +31,8 @@ TFMainThreadRunner >> doInitialize [
 
 	super doInitialize.
 	MainThreadHandle := self workerAddress.
-	handle := MainThreadHandle
+	handle := MainThreadHandle.
+	self applyThreadName
 ]
 
 { #category : 'executing' }

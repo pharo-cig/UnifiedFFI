@@ -13,7 +13,6 @@ Class {
 	#name : 'TFWorker',
 	#superclass : 'TFRunner',
 	#instVars : [
-		'name',
 		'semaphorePoolHolder'
 	],
 	#classVars : [
@@ -68,14 +67,6 @@ TFWorker >> doInitialize [
 	self applyThreadName
 ]
 
-{ #category : 'private' }
-TFWorker >> applyThreadName [
-
-	name ifNil: [ ^ self ].
-	self isNull ifTrue: [ ^ self ].
-	self primitiveSetWorkerName: name
-]
-
 { #category : 'executing' }
 TFWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
@@ -89,19 +80,6 @@ TFWorker >> initialize [
 
 	super initialize.
 	semaphorePoolHolder := Array new: 1
-]
-
-{ #category : 'accessing' }
-TFWorker >> name [
-
-	^ name
-]
-
-{ #category : 'accessing' }
-TFWorker >> name: aName [
-
-	name := aName.
-	self isNull ifFalse: [ self applyThreadName ]
 ]
 
 { #category : 'private' }
@@ -118,14 +96,6 @@ TFWorker >> newSemaphorePool [
 TFWorker >> primitiveCreateWorker [
 
 	<primitive: 'primitiveCreateWorker'>
-
-	^ self primitiveFailed
-]
-
-{ #category : 'private' }
-TFWorker >> primitiveSetWorkerName: aString [
-
-	<primitive: 'primitiveSetWorkerName'>
 
 	^ self primitiveFailed
 ]
