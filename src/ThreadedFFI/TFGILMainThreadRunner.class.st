@@ -3,7 +3,7 @@ I represent the launcher-provided GIL worker that is bound to the process main t
 It is only available when the VM was started with --gil-worker.
 "
 Class {
-	#name : 'TFGILMainThreadWorker',
+	#name : 'TFGILMainThreadRunner',
 	#superclass : 'TFMainThreadRunner',
 	#traits : 'TFTGILWorker',
 	#classTraits : 'TFTGILWorker classTrait',
@@ -13,13 +13,13 @@ Class {
 }
 
 { #category : 'accessing' }
-TFGILMainThreadWorker class >> default [
+TFGILMainThreadRunner class >> default [
 
 	^ self uniqueInstance
 ]
 
 { #category : 'testing' }
-TFGILMainThreadWorker class >> isAvailable [
+TFGILMainThreadRunner class >> isAvailable [
 
 	<primitive: 'primitiveHasMainThreadGILWorker' error: ec>
 
@@ -27,13 +27,13 @@ TFGILMainThreadWorker class >> isAvailable [
 ]
 
 { #category : 'accessing' }
-TFGILMainThreadWorker class >> runnerName [
+TFGILMainThreadRunner class >> runnerName [
 
 	^ 'Main Thread (GIL)'
 ]
 
 { #category : 'accessing' }
-TFGILMainThreadWorker class >> uniqueInstance [
+TFGILMainThreadRunner class >> uniqueInstance [
 
 	self isAvailable 
 		ifFalse: [ self error: 'Main-thread GIL worker requires the VM to be started with --gil-worker' ].
@@ -42,13 +42,13 @@ TFGILMainThreadWorker class >> uniqueInstance [
 ]
 
 { #category : 'private' }
-TFGILMainThreadWorker >> primitiveCreateWorker [
+TFGILMainThreadRunner >> primitiveCreateWorker [
 
 	^ self
 ]
 
 { #category : 'private' }
-TFGILMainThreadWorker >> workerAddress [
+TFGILMainThreadRunner >> workerAddress [
 
 	^ (ExternalAddress loadSymbol: 'mainThreadGILWorker') pointerAt: 1
 ]

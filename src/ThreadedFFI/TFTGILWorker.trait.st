@@ -38,13 +38,19 @@ TFTGILWorker >> defer: aBlock [
 	resultHolder first
 		ifTrue: [ ^ resultHolder second ].
 
-	resultHolder second signal
+	resultHolder second debug
 ]
 
 { #category : 'private' }
 TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 
 	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance callbackProcess
+]
+
+{ #category : 'private' }
+TFTGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
+	<primitive: 'primitiveGILWorkerCallout' error: ec>
+   	self primitiveFailed
 ]
 
 { #category : 'testing' }
