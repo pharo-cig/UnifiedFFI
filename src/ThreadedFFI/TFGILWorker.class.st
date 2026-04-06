@@ -22,7 +22,7 @@ TFGILWorker class >> default [
 TFGILWorker >> callbackRunningStrategy [
 
 	self ensureDirectCallbackProcessRegistered.
-	^ TFCallbackSameProcessRunStrategy uniqueInstance
+	^ TFCallbackForkRunStrategy new
 ]
 
 { #category : 'executing' }

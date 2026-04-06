@@ -11,6 +11,13 @@ TFUFFIMarshallingInCallbacksTest class >> isAbstract [
 	^ self == TFUFFIMarshallingInCallbacksTest
 ]
 
+{ #category : 'building suites' }
+TFUFFIMarshallingInCallbacksTest class >> testParameters [
+
+	^ ParametrizedTestMatrix new
+		forSelector: #ffiLibrary addOptions: { TFTestLibraryUsingSameThreadRunner. TFTestLibraryUsingWorker. }
+]
+
 { #category : 'tests' }
 TFUFFIMarshallingInCallbacksTest >> assertCharType: name [
 

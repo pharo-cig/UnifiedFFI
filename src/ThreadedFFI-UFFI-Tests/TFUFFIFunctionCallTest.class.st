@@ -52,7 +52,8 @@ TFUFFIFunctionCallTest >> testLongCalloutDoesNotBlockImage [
 	| calloutEnter calloutExit orderOfFinishing |
 
 	"If we are running in the same thread execution, it will block the interpreter. So the test is skipped."
-	(self ffiLibrary = TFTestLibraryUsingSameThreadRunner)
+	((self ffiLibrary = TFTestLibraryUsingSameThreadRunner)
+		or: [ self ffiLibrary = TFTestLibraryUsingGILWorker ])
 		ifTrue: [ ^ self skip ].
 
 	calloutEnter := Semaphore new.
