@@ -50,6 +50,13 @@ TFRunner >> cannotReturnCallbackInWrongOrder: aCallbackInvocation [
 		signal
 ]
 
+{ #category : 'deferred message' }
+TFRunner >> defer: aBlock [
+	"this just have sense in the context of GIL worker"
+
+	^ aBlock value 
+]
+
 { #category : 'executing' }
 TFRunner >> doInitialize [
 

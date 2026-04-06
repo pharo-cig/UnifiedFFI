@@ -17,8 +17,8 @@ TFTGILWorker >> callbackRunningStrategy [
 
 { #category : 'executing' }
 TFTGILWorker >> defer: aBlock [
-
 	| resultHolder deferredProcess |
+	
 	self ensureInitialized.
 	resultHolder := Array new: 2.
 	deferredProcess := [
@@ -41,7 +41,7 @@ TFTGILWorker >> defer: aBlock [
 	resultHolder second signal
 ]
 
-{ #category : 'executing' }
+{ #category : 'private' }
 TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 
 	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance callbackProcess
@@ -61,7 +61,7 @@ TFTGILWorker >> isInGILWorkerContext [
 	self primitiveFailed
 ]
 
-{ #category : 'executing' }
+{ #category : 'private' }
 TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
 
 	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
@@ -69,7 +69,7 @@ TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
 	self primitiveFailed
 ]
 
-{ #category : 'executing' }
+{ #category : 'private' }
 TFTGILWorker >> primitiveLeaveGILWorkerContext [
 
 	<primitive: 'primitiveLeaveGILWorkerContext' error: ec>
@@ -77,7 +77,7 @@ TFTGILWorker >> primitiveLeaveGILWorkerContext [
 	self primitiveFailed
 ]
 
-{ #category : 'executing' }
+{ #category : 'private' }
 TFTGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
 
 	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>

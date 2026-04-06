@@ -93,6 +93,12 @@ TFProcessLocalWorker >> defaultWorker: aWorker [
 	defaultWorker := aWorker
 ]
 
+{ #category : 'deferred message' }
+TFProcessLocalWorker >> defer: aBlock [
+
+	^ self worker defer: aBlock
+]
+
 { #category : 'executing' }
 TFProcessLocalWorker >> ensureInitialized [
 
