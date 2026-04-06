@@ -143,5 +143,9 @@ TFExternalFunction >> moduleName: anObject [
 TFExternalFunction >> validate [
 	definition validate.
 	handle isNull
-		ifTrue: [ handle := ExternalAddress loadSymbol: functionName module: moduleName ]
+		ifTrue: [ handle := ExternalAddress loadSymbol: functionName module: moduleName ].
+	handle isNull ifTrue: [
+		SymbolNotFoundError
+			symbolName: functionName
+			module: moduleName ]
 ]
