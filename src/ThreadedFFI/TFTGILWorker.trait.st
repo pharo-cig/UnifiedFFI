@@ -3,6 +3,10 @@ I provide GIL-specific worker behavior shared by GIL-capable runners.
 "
 Trait {
 	#name : 'TFTGILWorker',
+	#instVars : [
+		'callbackRunner',
+		'name'
+	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
 	#tag : 'Worker'
@@ -21,19 +25,6 @@ TFTGILWorker >> callbackRunningStrategy [
 
 	self ensureDirectCallbackProcessRegistered.
 	^ TFCallbackSameProcessRunStrategy uniqueInstance
-]
-
-{ #category : 'accessing' }
-TFTGILWorker >> forCallback [
-
-	self ensureInitialized.
-	self ensureDirectCallbackProcessRegistered.
-	^ ((callbackRunner isNil) or: [ callbackRunner isNull ])
-		ifTrue: [
-			callbackRunner := TFCallbackWorkerProxy
-				forHandle: self primitiveGetGILWorkerInnerAddress
-				owner: self ]
-		ifFalse: [ callbackRunner ]
 ]
 
 { #category : 'executing' }
@@ -72,6 +63,19 @@ TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 TFTGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 	<primitive: 'primitiveGILWorkerCallout' error: ec>
    	self primitiveFailed
+]
+
+{ #category : 'accessing' }
+TFTGILWorker >> forCallback [
+ 
+	self ensureInitialized.
+	self ensureDirectCallbackProcessRegistered.
+	^ ((callbackRunner isNil) or: [ callbackRunner isNull ])
+		ifTrue: [
+			callbackRunner := TFCallbackWorkerProxy
+				forHandle: self primitiveGetGILWorkerInnerAddress
+				owner: self ]
+		ifFalse: [ callbackRunner ]
 ]
 
 { #category : 'testing' }

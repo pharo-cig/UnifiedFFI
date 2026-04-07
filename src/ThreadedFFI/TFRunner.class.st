@@ -30,15 +30,15 @@ TFRunner >> applyThreadName [
 ]
 
 { #category : 'accessing' }
-TFRunner >> callbackRunningStrategy [
-
-	^ TFCallbackForkRunStrategy new
-]
-
-{ #category : 'accessing' }
 TFRunner >> callbackProcess [
 
 	^ TFCallbackQueue uniqueInstance callbackProcess
+]
+
+{ #category : 'accessing' }
+TFRunner >> callbackRunningStrategy [
+
+	^ TFCallbackForkRunStrategy new
 ]
 
 { #category : 'errors' }
@@ -58,6 +58,13 @@ TFRunner >> cannotReturnCallbackInWrongOrder: aCallbackInvocation [
 		signal
 ]
 
+{ #category : 'deferred message' }
+TFRunner >> defer: aBlock [
+	"this just have sense in the context of GIL worker"
+
+	^ aBlock value 
+]
+
 { #category : 'accessing' }
 TFRunner >> directCallbackProcess [
 
@@ -74,13 +81,6 @@ TFRunner >> directCallbackProcess [
 	directCallbackProcess name: self name, ' Direct Callback'.
 	directCallbackProcess resume.
 	^ directCallbackProcess
-]
-
-{ #category : 'deferred message' }
-TFRunner >> defer: aBlock [
-	"this just have sense in the context of GIL worker"
-
-	^ aBlock value 
 ]
 
 { #category : 'executing' }
@@ -181,6 +181,12 @@ TFRunner >> isGILWorker [
 	^ false
 ]
 
+{ #category : 'private' }
+TFRunner >> lookupCallback: anExternalAddress [
+
+	^ TFCallbackQueue uniqueInstance lookupCallback: anExternalAddress
+]
+
 { #category : 'accessing' }
 TFRunner >> name [
 
@@ -192,12 +198,6 @@ TFRunner >> name: aName [
 
 	name := aName.
 	self isNull ifFalse: [ self applyThreadName ]
-]
-
-{ #category : 'private' }
-TFRunner >> lookupCallback: anExternalAddress [
-
-	^ TFCallbackQueue uniqueInstance lookupCallback: anExternalAddress
 ]
 
 { #category : 'private' }
