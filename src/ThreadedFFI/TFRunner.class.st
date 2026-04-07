@@ -13,7 +13,8 @@ Class {
 		'stackProtect',
 		'exceptionHandler',
 		'semaphorePool',
-		'callbackReturnSemaphore'
+		'callbackReturnSemaphore',
+		'directCallbackProcess'
 	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
@@ -34,6 +35,12 @@ TFRunner >> callbackRunningStrategy [
 	^ TFCallbackForkRunStrategy new
 ]
 
+{ #category : 'accessing' }
+TFRunner >> callbackProcess [
+
+	^ TFCallbackQueue uniqueInstance callbackProcess
+]
+
 { #category : 'errors' }
 TFRunner >> cannotReturnCallbackFromOldSession: aCallbackInvocation [
 
@@ -51,6 +58,24 @@ TFRunner >> cannotReturnCallbackInWrongOrder: aCallbackInvocation [
 		signal
 ]
 
+{ #category : 'accessing' }
+TFRunner >> directCallbackProcess [
+
+	(directCallbackProcess isNotNil and: [ directCallbackProcess isTerminated not ])
+		ifTrue: [ ^ directCallbackProcess ].
+
+	directCallbackProcess := [
+		[ true ] whileTrue: [
+			Processor activeProcess suspend.
+			[ self executePendingCallback ]
+				on: Exception
+				fork: [ :ex | ex pass ] ] ] newProcess.
+	directCallbackProcess priority: Processor highIOPriority.
+	directCallbackProcess name: self name, ' Direct Callback'.
+	directCallbackProcess resume.
+	^ directCallbackProcess
+]
+
 { #category : 'deferred message' }
 TFRunner >> defer: aBlock [
 	"this just have sense in the context of GIL worker"
@@ -61,10 +86,13 @@ TFRunner >> defer: aBlock [
 { #category : 'executing' }
 TFRunner >> doInitialize [
 
+	callbackRunner := nil.
 	callbackInvocationStack := Stack new.
 	stackProtect := Semaphore forMutualExclusion.
+	directCallbackProcess := nil.
 	semaphorePool ifNotNil: [ semaphorePool release ].
-	semaphorePool := self newSemaphorePool
+	semaphorePool := self newSemaphorePool.
+	self directCallbackProcess
 ]
 
 { #category : 'executing' }
@@ -98,6 +126,27 @@ TFRunner >> executeCallback: aCallbackInvocation [
 
 	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
 	aCallbackInvocation callback runStrategy executeCallback: aCallbackInvocation on: self
+]
+
+{ #category : 'executing' }
+TFRunner >> executeDirectCallback: aCallbackInvocation [
+
+	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
+	self handleExceptionDuring: [ aCallbackInvocation execute ]
+]
+
+{ #category : 'operations' }
+TFRunner >> executePendingCallback [
+
+	| aCallbackInvocation |
+
+	aCallbackInvocation := self nextPendingCallback.
+	aCallbackInvocation ifNil: [ ^ self ].
+	aCallbackInvocation getHandle isNull ifTrue: [ ^ self ].
+
+	aCallbackInvocation callback: ((self lookupCallback: aCallbackInvocation callbackData)
+		ifNil: [ self error: 'Callback not found.' ]).
+	self executeDirectCallback: aCallbackInvocation
 ]
 
 { #category : 'accessing' }
@@ -146,12 +195,24 @@ TFRunner >> name: aName [
 ]
 
 { #category : 'private' }
+TFRunner >> lookupCallback: anExternalAddress [
+
+	^ TFCallbackQueue uniqueInstance lookupCallback: anExternalAddress
+]
+
+{ #category : 'private' }
 TFRunner >> newSemaphorePool [
 
 	^ TFPool
 		newProvider: (MessageSend receiver: TFExternalSemaphore selector: #new)
 		size: self semaphorePoolSize
 		releaseBlock: #release "This is ugly... but do not change it to a block, if you change it to a block it will have a reference to self. Creating a loop in the references and leaking memory"
+]
+
+{ #category : 'private' }
+TFRunner >> nextPendingCallback [
+
+	^ TFCallbackQueue uniqueInstance nextPendingCallback
 ]
 
 { #category : 'private' }
@@ -171,12 +232,22 @@ TFRunner >> primitiveSetWorkerName: aString [
 	^ self primitiveFailed
 ]
 
+{ #category : 'accessing' }
+TFRunner >> registerCallback: aCallback [
+
+	^ TFCallbackQueue uniqueInstance registerCallback: aCallback
+]
+
 { #category : 'executing' }
 TFRunner >> release [
 
 	semaphorePool ifNotNil: [
 		semaphorePool release.
 		semaphorePool := nil ].
+
+	directCallbackProcess ifNotNil: [
+		directCallbackProcess terminate.
+		directCallbackProcess := nil ].
 
 	handle beNull.
 	"If the stack is not initialized it means this worker was never used for callbacks"

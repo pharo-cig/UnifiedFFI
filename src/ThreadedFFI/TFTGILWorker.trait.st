@@ -3,9 +3,6 @@ I provide GIL-specific worker behavior shared by GIL-capable runners.
 "
 Trait {
 	#name : 'TFTGILWorker',
-	#instVars : [
-		'name'
-	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
 	#tag : 'Worker'
@@ -23,15 +20,20 @@ TFTGILWorker >> applyThreadName [
 TFTGILWorker >> callbackRunningStrategy [
 
 	self ensureDirectCallbackProcessRegistered.
-	^ TFCallbackForkRunStrategy new
+	^ TFCallbackSameProcessRunStrategy uniqueInstance
 ]
 
 { #category : 'accessing' }
 TFTGILWorker >> forCallback [
 
-	^ callbackRunner ifNil: [
-		callbackRunner := TFCallbackWorkerProxy
-			forHandle: self primitiveGetGILWorkerInnerAddress ]
+	self ensureInitialized.
+	self ensureDirectCallbackProcessRegistered.
+	^ ((callbackRunner isNil) or: [ callbackRunner isNull ])
+		ifTrue: [
+			callbackRunner := TFCallbackWorkerProxy
+				forHandle: self primitiveGetGILWorkerInnerAddress
+				owner: self ]
+		ifFalse: [ callbackRunner ]
 ]
 
 { #category : 'executing' }
@@ -63,7 +65,7 @@ TFTGILWorker >> defer: aBlock [
 { #category : 'private' }
 TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 
-	self primitiveRegisterGILDirectCallbackProcess: TFCallbackQueue uniqueInstance directCallbackProcess
+	self primitiveRegisterGILDirectCallbackProcess: self directCallbackProcess
 ]
 
 { #category : 'private' }

@@ -139,9 +139,10 @@ TFCallback >> register [
 	handle isNull ifFalse: [ ^ self error: 'Callback already registered' ].
 
 	self validateTypes.
-	self runner ensureInitialized.
+	runner := self runner forCallback.
+	runner ensureInitialized.
 	self registerCallback: frontendCallback tfPrintString.
-	TFCallbackQueue uniqueInstance registerCallback: self
+	runner registerCallback: self
 ]
 
 { #category : 'registering' }

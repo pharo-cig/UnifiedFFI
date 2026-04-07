@@ -36,3 +36,19 @@ TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usi
 
 	self primitiveFailed
 ]
+
+{ #category : 'private' }
+TFGILWorker >> primitiveCreateWorker [
+
+	<primitive: 'primitiveCreateGILWorker'>
+
+	^ self primitiveFailed
+]
+
+{ #category : 'private' }
+TFGILWorker >> primitiveReleaseWorker [
+
+	<primitive: 'primitiveReleaseGILWorker'>
+
+	^ self primitiveFailed
+]
