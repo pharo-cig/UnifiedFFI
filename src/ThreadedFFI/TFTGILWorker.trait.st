@@ -109,9 +109,25 @@ TFTGILWorker >> primitiveGetGILWorkerInnerAddress [
 ]
 
 { #category : 'private' }
+TFTGILWorker >> primitiveDetachGILWorkerContext [
+
+	<primitive: 'primitiveDetachGILWorkerContext' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'private' }
 TFTGILWorker >> primitiveLeaveGILWorkerContext [
 
 	<primitive: 'primitiveLeaveGILWorkerContext' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> primitiveReattachGILWorkerContext [
+
+	<primitive: 'primitiveReattachGILWorkerContext' error: ec>
 
 	self primitiveFailed
 ]
