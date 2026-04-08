@@ -70,6 +70,24 @@ TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 ]
 
 { #category : 'private' }
+TFTGILWorker >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
+
+	self isInGILWorkerContext
+		ifTrue: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
+
+	^ callbackReturnSemaphore wait
+]
+
+{ #category : 'private' }
+TFTGILWorker >> withCallbackStackLockDo: aBlock [
+
+	self isInGILWorkerContext
+		ifTrue: [ ^ aBlock valueUnpreemptively ].
+
+	^ stackProtect critical: aBlock
+]
+
+{ #category : 'private' }
 TFTGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 	<primitive: 'primitiveGILWorkerCallout' error: ec>
    	self primitiveFailed

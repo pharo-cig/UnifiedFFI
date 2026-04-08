@@ -131,14 +131,14 @@ TFRunner >> executeCallback: aCallbackInvocation [
 	To guarantee the stack is not modified while this method runs, this method should be called from a high priority process.
 	  => no callbacks should finish while this method runs."
 
-	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
+	self withCallbackStackLockDo: [ callbackInvocationStack push: aCallbackInvocation ].
 	aCallbackInvocation callback runStrategy executeCallback: aCallbackInvocation on: self
 ]
 
 { #category : 'executing' }
 TFRunner >> executeDirectCallback: aCallbackInvocation [
 
-	stackProtect critical: [ callbackInvocationStack push: aCallbackInvocation ].
+	self withCallbackStackLockDo: [ callbackInvocationStack push: aCallbackInvocation ].
 	self handleExceptionDuring: [ aCallbackInvocation execute ]
 ]
 
@@ -259,7 +259,7 @@ TFRunner >> release [
 	handle beNull.
 	"If the stack is not initialized it means this worker was never used for callbacks"
 	stackProtect ifNil: [ ^ self ].
-	stackProtect critical: [
+	self withCallbackStackLockDo: [
 		callbackInvocationStack := nil ]
 ]
 
@@ -280,7 +280,7 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	callbackInvocationStack isEmptyOrNil ifTrue: [
 		^ self cannotReturnCallbackFromOldSession: aCallbackInvocation].
 
-	stackProtect critical: [
+	self withCallbackStackLockDo: [
 		(callbackInvocationStack top == aCallbackInvocation)
 			ifTrue: [
 				aCallbackInvocation returnExecution
@@ -292,8 +292,20 @@ TFRunner >> returnCallback: aCallbackInvocation [
 						[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
 						^ self ]] ].
 	"failed"
-	callbackReturnSemaphore wait.
+	self waitForCallbackReturnOrderingOn: aCallbackInvocation.
 	self returnCallback: aCallbackInvocation
+]
+
+{ #category : 'private' }
+TFRunner >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
+
+	callbackReturnSemaphore wait
+]
+
+{ #category : 'private' }
+TFRunner >> withCallbackStackLockDo: aBlock [
+
+	^ stackProtect critical: aBlock
 ]
 
 { #category : 'accessing' }
