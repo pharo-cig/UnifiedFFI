@@ -289,7 +289,7 @@ TFRunner >> returnCallback: aCallbackInvocation [
 						 may happen that the stack is empty."
 						callbackInvocationStack ifEmpty: [ ^ self ].
 						callbackInvocationStack pop.
-						[ callbackReturnSemaphore signalAll ] valueUnpreemptively.
+						self signalCallbackReturnSemaphore.
 						^ self ]] ].
 	"failed"
 	self waitForCallbackReturnOrderingOn: aCallbackInvocation.
@@ -300,6 +300,12 @@ TFRunner >> returnCallback: aCallbackInvocation [
 TFRunner >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
 
 	callbackReturnSemaphore wait
+]
+
+{ #category : 'private' }
+TFRunner >> signalCallbackReturnSemaphore [
+
+	[ callbackReturnSemaphore signalAll ] valueUnpreemptively
 ]
 
 { #category : 'private' }

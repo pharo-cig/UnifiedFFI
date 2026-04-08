@@ -79,6 +79,15 @@ TFTGILWorker >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
 ]
 
 { #category : 'private' }
+TFTGILWorker >> signalCallbackReturnSemaphore [
+
+	self isInGILWorkerContext
+		ifTrue: [ ^ callbackReturnSemaphore signalAll ].
+
+	^ [ callbackReturnSemaphore signalAll ] valueUnpreemptively
+]
+
+{ #category : 'private' }
 TFTGILWorker >> withCallbackStackLockDo: aBlock [
 
 	self isInGILWorkerContext
