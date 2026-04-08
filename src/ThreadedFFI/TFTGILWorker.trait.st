@@ -82,7 +82,7 @@ TFTGILWorker >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
 TFTGILWorker >> withCallbackStackLockDo: aBlock [
 
 	self isInGILWorkerContext
-		ifTrue: [ ^ aBlock valueUnpreemptively ].
+		ifTrue: [ ^ aBlock value ].
 
 	^ stackProtect critical: aBlock
 ]
