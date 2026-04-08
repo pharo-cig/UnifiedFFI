@@ -53,6 +53,16 @@ TFTGILWorker >> defer: aBlock [
 	resultHolder second signal
 ]
 
+{ #category : 'executing' }
+TFTGILWorker >> deferDetachable: aBlock [
+	| deferredProcess |
+
+	self ensureInitialized.
+	deferredProcess := aBlock newProcess.
+	self primitiveGILWorkerDeferProcess: deferredProcess.
+	^ deferredProcess
+]
+
 { #category : 'private' }
 TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 

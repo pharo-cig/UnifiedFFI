@@ -65,6 +65,13 @@ TFRunner >> defer: aBlock [
 	^ aBlock value 
 ]
 
+{ #category : 'deferred message' }
+TFRunner >> deferDetachable: aBlock [
+	"Detachable borrowed sessions only have special meaning for GIL workers."
+
+	^ self defer: aBlock
+]
+
 { #category : 'accessing' }
 TFRunner >> directCallbackProcess [
 
