@@ -182,6 +182,12 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 		executeOn: self
 ]
 
+{ #category : 'executing' }
+TFRunner >> invokeDetachableFunction: aTFExternalFunction withArguments: aCollection [
+
+	^ self invokeFunction: aTFExternalFunction withArguments: aCollection
+]
+
 { #category : 'testing' }
 TFRunner >> isGILWorker [
 

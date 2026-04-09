@@ -102,6 +102,20 @@ TFTGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments us
    	self primitiveFailed
 ]
 
+{ #category : 'private' }
+TFTGILWorker >> executeDetachableFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
+	<primitive: 'primitiveDetachableGILWorkerCallout' error: ec>
+	self primitiveFailed
+]
+
+{ #category : 'executing' }
+TFTGILWorker >> invokeDetachableFunction: aTFExternalFunction withArguments: aCollection [
+
+	^ (TFDetachableExternalAsyncCall forFunction: aTFExternalFunction)
+		parameters: aCollection;
+		executeOn: self
+]
+
 { #category : 'accessing' }
 TFTGILWorker >> forCallback [
  
