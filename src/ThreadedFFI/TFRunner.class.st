@@ -83,7 +83,7 @@ TFRunner >> directCallbackProcess [
 			Processor activeProcess suspend.
 			[ self executePendingCallback ]
 				on: Exception
-				fork: [ :ex | ex pass ] ] ] newProcess.
+				do: [ :ex | ex pass ] ] ] newProcess.
 	directCallbackProcess priority: Processor highIOPriority.
 	directCallbackProcess name: self name, ' Direct Callback'.
 	directCallbackProcess resume.
