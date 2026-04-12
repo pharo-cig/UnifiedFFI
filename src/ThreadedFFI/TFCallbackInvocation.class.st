@@ -85,7 +85,16 @@ TFCallbackInvocation >> primCallbackReturn [
 { #category : 'operations' }
 TFCallbackInvocation >> returnExecution [
 
-	"It returns true if the callback can return, and false if the order is not correct and should retry later"
+	"It returns true if the callback can return, and false if the order is not correct and should retry later.
+	For direct GIL callbacks the primitive may transfer control back to C without
+	returning to this Smalltalk continuation, so callers must complete any
+	bookkeeping before sending this message on that path."
+
+	(self runner isGILWorker and: [ self runner isInGILWorkerContext ])
+		ifTrue: [
+			handle beNull.
+			self primCallbackReturn.
+			self error: 'Direct GIL callback return should not resume Smalltalk after the primitive' ].
 
 	^ self primCallbackReturn
 		ifTrue: [ handle beNull. true ]

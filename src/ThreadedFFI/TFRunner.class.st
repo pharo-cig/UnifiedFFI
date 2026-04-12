@@ -289,6 +289,17 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	self withCallbackStackLockDo: [
 		(callbackInvocationStack top == aCallbackInvocation)
 			ifTrue: [
+				(self isGILWorker and: [ self isInGILWorkerContext ])
+					ifTrue: [
+						callbackInvocationStack pop.
+						self signalCallbackReturnSemaphore.
+						"primitiveCallbackReturn hands control back to the foreign
+						callback caller on the direct GIL path, so Smalltalk-side
+						bookkeeping must already be complete."
+						aCallbackInvocation returnExecution.
+						self error:
+							'Direct GIL callback return unexpectedly resumed after primitiveCallbackReturn' ].
+
 				aCallbackInvocation returnExecution
 					ifTrue: [
 						"If we are starting a session and an execution was executed, it
