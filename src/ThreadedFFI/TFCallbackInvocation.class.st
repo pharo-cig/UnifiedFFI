@@ -92,8 +92,8 @@ TFCallbackInvocation >> returnExecution [
 
 	(self runner isGILWorker and: [ self runner isInGILWorkerContext ])
 		ifTrue: [
-			handle beNull.
 			self primCallbackReturn.
+			handle beNull.
 			self error: 'Direct GIL callback return should not resume Smalltalk after the primitive' ].
 
 	^ self primCallbackReturn
