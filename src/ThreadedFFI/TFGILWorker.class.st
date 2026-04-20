@@ -30,17 +30,17 @@ TFGILWorker class >> named: aName [
 ]
 
 { #category : 'executing' }
-TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
+TFGILWorker >> executeDetachableFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
-	<primitive: 'primitiveGILWorkerCallout' error: ec>
+	<primitive: 'primitiveDetachableGILWorkerCallout' error: ec>
 
 	self primitiveFailed
 ]
 
 { #category : 'executing' }
-TFGILWorker >> executeDetachableFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
+TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
 
-	<primitive: 'primitiveDetachableGILWorkerCallout' error: ec>
+	<primitive: 'primitiveGILWorkerCallout' error: ec>
 
 	self primitiveFailed
 ]

@@ -3,10 +3,6 @@ I provide GIL-specific worker behavior shared by GIL-capable runners.
 "
 Trait {
 	#name : 'TFTGILWorker',
-	#instVars : [
-		'callbackRunner',
-		'name'
-	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
 	#tag : 'Worker'
@@ -15,9 +11,9 @@ Trait {
 { #category : 'private' }
 TFTGILWorker >> applyThreadName [
 
-	name ifNil: [ ^ self ].
+	self name ifNil: [ ^ self ].
 	self isNull ifTrue: [ ^ self ].
-	self primitiveSetGILWorkerName: name, ' (GIL)'
+	self primitiveSetGILWorkerName: self name, ' (GIL)'
 ]
 
 { #category : 'accessing' }
@@ -70,30 +66,9 @@ TFTGILWorker >> ensureDirectCallbackProcessRegistered [
 ]
 
 { #category : 'private' }
-TFTGILWorker >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
-
-	self isInGILWorkerContext
-		ifTrue: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
-
-	^ callbackReturnSemaphore wait
-]
-
-{ #category : 'private' }
-TFTGILWorker >> signalCallbackReturnSemaphore [
-
-	self isInGILWorkerContext
-		ifTrue: [ ^ callbackReturnSemaphore signalAll ].
-
-	^ [ callbackReturnSemaphore signalAll ] valueUnpreemptively
-]
-
-{ #category : 'private' }
-TFTGILWorker >> withCallbackStackLockDo: aBlock [
-
-	self isInGILWorkerContext
-		ifTrue: [ ^ aBlock value ].
-
-	^ stackProtect critical: aBlock
+TFTGILWorker >> executeDetachableFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
+	<primitive: 'primitiveDetachableGILWorkerCallout' error: ec>
+	self primitiveFailed
 ]
 
 { #category : 'private' }
@@ -102,10 +77,17 @@ TFTGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments us
    	self primitiveFailed
 ]
 
-{ #category : 'private' }
-TFTGILWorker >> executeDetachableFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
-	<primitive: 'primitiveDetachableGILWorkerCallout' error: ec>
-	self primitiveFailed
+{ #category : 'accessing' }
+TFTGILWorker >> forCallback [
+ 
+	self ensureInitialized.
+	self ensureDirectCallbackProcessRegistered.
+	^ ((self callbackRunner isNil) or: [ self callbackRunner isNull ])
+		ifTrue: [
+			self callbackRunner: (TFCallbackWorkerProxy
+				forHandle: self primitiveGetGILWorkerInnerAddress
+				owner: self) ]
+		ifFalse: [ self callbackRunner ]
 ]
 
 { #category : 'executing' }
@@ -114,19 +96,6 @@ TFTGILWorker >> invokeDetachableFunction: aTFExternalFunction withArguments: aCo
 	^ (TFDetachableExternalAsyncCall forFunction: aTFExternalFunction)
 		parameters: aCollection;
 		executeOn: self
-]
-
-{ #category : 'accessing' }
-TFTGILWorker >> forCallback [
- 
-	self ensureInitialized.
-	self ensureDirectCallbackProcessRegistered.
-	^ ((callbackRunner isNil) or: [ callbackRunner isNull ])
-		ifTrue: [
-			callbackRunner := TFCallbackWorkerProxy
-				forHandle: self primitiveGetGILWorkerInnerAddress
-				owner: self ]
-		ifFalse: [ callbackRunner ]
 ]
 
 { #category : 'testing' }
@@ -144,17 +113,25 @@ TFTGILWorker >> isInGILWorkerContext [
 ]
 
 { #category : 'private' }
-TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
+TFTGILWorker >> primitiveActivatePendingGILWorkerDetach [
 
-	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
+	<primitive: 'primitiveActivatePendingGILWorkerDetach' error: ec>
 
 	self primitiveFailed
 ]
 
 { #category : 'private' }
-TFTGILWorker >> primitiveGetGILWorkerInnerAddress [
+TFTGILWorker >> primitiveDetachGILWorkerContext [
 
-	<primitive: 'primitiveGetGILWorkerInnerAddress' error: ec>
+	<primitive: 'primitiveDetachGILWorkerContext' error: ec>
+
+	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> primitiveGILWorkerDeferProcess: aProcess [
+
+	<primitive: 'primitiveGILWorkerDeferProcess' error: ec>
 
 	self primitiveFailed
 ]
@@ -168,17 +145,9 @@ TFTGILWorker >> primitiveGetActivatePendingGILWorkerDetachInnerAddress [
 ]
 
 { #category : 'private' }
-TFTGILWorker >> primitiveActivatePendingGILWorkerDetach [
+TFTGILWorker >> primitiveGetGILWorkerInnerAddress [
 
-	<primitive: 'primitiveActivatePendingGILWorkerDetach' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'private' }
-TFTGILWorker >> primitiveDetachGILWorkerContext [
-
-	<primitive: 'primitiveDetachGILWorkerContext' error: ec>
+	<primitive: 'primitiveGetGILWorkerInnerAddress' error: ec>
 
 	self primitiveFailed
 ]
@@ -213,4 +182,31 @@ TFTGILWorker >> primitiveSetGILWorkerName: aString [
 	<primitive: 'primitiveSetGILWorkerName'>
 
 	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> signalCallbackReturnSemaphore [
+
+	self isInGILWorkerContext
+		ifTrue: [ ^ self callbackReturnSemaphore signalAll ].
+
+	^ [ self callbackReturnSemaphore signalAll ] valueUnpreemptively
+]
+
+{ #category : 'private' }
+TFTGILWorker >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
+
+	self isInGILWorkerContext
+		ifTrue: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
+
+	^ self callbackReturnSemaphore wait
+]
+
+{ #category : 'private' }
+TFTGILWorker >> withCallbackStackLockDo: aBlock [
+
+	self isInGILWorkerContext
+		ifTrue: [ ^ aBlock value ].
+
+	^ self stackProtect critical: aBlock
 ]

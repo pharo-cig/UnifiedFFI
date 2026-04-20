@@ -7,14 +7,14 @@ Class {
 	#name : 'TFRunner',
 	#superclass : 'FFIExternalReference',
 	#instVars : [
-		'name',
-		'callbackRunner',
 		'callbackInvocationStack',
 		'stackProtect',
 		'exceptionHandler',
 		'semaphorePool',
 		'callbackReturnSemaphore',
-		'directCallbackProcess'
+		'name',
+		'directCallbackProcess',
+		'callbackRunner'
 	],
 	#category : 'ThreadedFFI-Worker',
 	#package : 'ThreadedFFI',
@@ -24,15 +24,39 @@ Class {
 { #category : 'private' }
 TFRunner >> applyThreadName [
 
-	name ifNil: [ ^ self ].
+	self name ifNil: [ ^ self ].
 	self isNull ifTrue: [ ^ self ].
-	self primitiveSetWorkerName: name
+	self primitiveSetWorkerName: self name
+]
+
+{ #category : 'private' }
+TFRunner >> callbackInvocationStack [
+	
+	^ callbackInvocationStack
 ]
 
 { #category : 'accessing' }
 TFRunner >> callbackProcess [
 
 	^ TFCallbackQueue uniqueInstance callbackProcess
+]
+
+{ #category : 'private' }
+TFRunner >> callbackReturnSemaphore [
+
+	^ callbackReturnSemaphore
+]
+
+{ #category : 'private' }
+TFRunner >> callbackRunner [
+
+	^ callbackRunner
+]
+
+{ #category : 'private' }
+TFRunner >> callbackRunner: aRunner [
+
+	callbackRunner := aRunner
 ]
 
 { #category : 'accessing' }
@@ -169,6 +193,12 @@ TFRunner >> handleExceptionDuring: aBlock [
 ]
 
 { #category : 'executing' }
+TFRunner >> invokeDetachableFunction: aTFExternalFunction withArguments: aCollection [
+
+	^ self invokeFunction: aTFExternalFunction withArguments: aCollection
+]
+
+{ #category : 'executing' }
 TFRunner >> invokeFunction: aTFExternalFunction [
 
 	^ self invokeFunction: aTFExternalFunction withArguments: #()
@@ -180,12 +210,6 @@ TFRunner >> invokeFunction: aTFExternalFunction withArguments: aCollection [
 	^ (TFPooledExternalAsyncCall forFunction: aTFExternalFunction)
 		parameters: aCollection;
 		executeOn: self
-]
-
-{ #category : 'executing' }
-TFRunner >> invokeDetachableFunction: aTFExternalFunction withArguments: aCollection [
-
-	^ self invokeFunction: aTFExternalFunction withArguments: aCollection
 ]
 
 { #category : 'testing' }
@@ -313,24 +337,6 @@ TFRunner >> returnCallback: aCallbackInvocation [
 	self returnCallback: aCallbackInvocation
 ]
 
-{ #category : 'private' }
-TFRunner >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
-
-	callbackReturnSemaphore wait
-]
-
-{ #category : 'private' }
-TFRunner >> signalCallbackReturnSemaphore [
-
-	[ callbackReturnSemaphore signalAll ] valueUnpreemptively
-]
-
-{ #category : 'private' }
-TFRunner >> withCallbackStackLockDo: aBlock [
-
-	^ stackProtect critical: aBlock
-]
-
 { #category : 'accessing' }
 TFRunner >> semaphorePool [
 
@@ -342,4 +348,28 @@ TFRunner >> semaphorePool [
 TFRunner >> semaphorePoolSize [
 
 	^ 5
+]
+
+{ #category : 'private' }
+TFRunner >> signalCallbackReturnSemaphore [
+
+	[ callbackReturnSemaphore signalAll ] valueUnpreemptively
+]
+
+{ #category : 'private' }
+TFRunner >> stackProtect [
+
+	^ stackProtect
+]
+
+{ #category : 'private' }
+TFRunner >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
+
+	callbackReturnSemaphore wait
+]
+
+{ #category : 'private' }
+TFRunner >> withCallbackStackLockDo: aBlock [
+
+	^ stackProtect critical: aBlock
 ]
