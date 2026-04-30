@@ -17,6 +17,33 @@ TFTGILWorker >> applyThreadName [
 ]
 
 { #category : 'accessing' }
+TFTGILWorker >> callbackDetachPolicy [
+	self ensureInitialized.
+	^ self primitiveGetGILWorkerCallbackDetachPolicy
+]
+
+{ #category : 'accessing' }
+TFTGILWorker >> callbackDetachPolicy: aPolicy [
+
+	self ensureInitialized.
+	self primitiveSetGILWorkerCallbackDetachPolicy: (self callbackDetachPolicyValueFor: aPolicy)
+]
+
+{ #category : 'private' }
+TFTGILWorker >> callbackDetachPolicyValueFor: aPolicy [
+	
+	aPolicy isInteger ifTrue: [
+		(aPolicy = 0 or: [ aPolicy = 1 ])
+			ifTrue: [ ^ aPolicy ].
+		self error: 'Invalid GIL callback detach policy: ', aPolicy printString ].
+
+	aPolicy = #immediate ifTrue: [ ^ 0 ].
+	aPolicy = #hybrid ifTrue: [ ^ 1 ].
+	
+	self error: 'Invalid GIL callback detach policy: ', aPolicy printString
+]
+
+{ #category : 'accessing' }
 TFTGILWorker >> callbackRunningStrategy [
 
 	self ensureDirectCallbackProcessRegistered.
@@ -145,6 +172,12 @@ TFTGILWorker >> primitiveGetActivatePendingGILWorkerDetachInnerAddress [
 ]
 
 { #category : 'private' }
+TFTGILWorker >> primitiveGetGILWorkerCallbackDetachPolicy [
+	<primitive: 'primitiveGetGILWorkerCallbackDetachPolicy' error: ec>
+	self primitiveFailed
+]
+
+{ #category : 'private' }
 TFTGILWorker >> primitiveGetGILWorkerInnerAddress [
 
 	<primitive: 'primitiveGetGILWorkerInnerAddress' error: ec>
@@ -173,6 +206,12 @@ TFTGILWorker >> primitiveRegisterGILDirectCallbackProcess: aProcess [
 
 	<primitive: 'primitiveRegisterGILDirectCallbackProcess' error: ec>
 
+	self primitiveFailed
+]
+
+{ #category : 'private' }
+TFTGILWorker >> primitiveSetGILWorkerCallbackDetachPolicy: anInteger [
+	<primitive: 'primitiveSetGILWorkerCallbackDetachPolicy' error: ec>
 	self primitiveFailed
 ]
 
