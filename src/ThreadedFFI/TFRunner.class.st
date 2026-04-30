@@ -218,6 +218,12 @@ TFRunner >> isGILWorker [
 	^ false
 ]
 
+{ #category : 'testing' }
+TFRunner >> isInGILWorkerContext [
+
+	self subclassResponsibility
+]
+
 { #category : 'private' }
 TFRunner >> lookupCallback: anExternalAddress [
 
