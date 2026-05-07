@@ -383,6 +383,14 @@ FFIStructure class >> resetAllStructuresIfPlatformChanged [
 ]
 
 { #category : 'class management' }
+FFIStructure class >> resetLastCompilationPlatform [
+	
+	"needed to reset compilation while building, to force a reset of structures
+	 even if bootstrap platform = current platform"
+	LastCompilationPlatform := nil
+]
+
+{ #category : 'class management' }
 FFIStructure class >> resetStructureIfNotIn: alreadyReset [
 	"Reset myself by recompiling all my fields.
 
@@ -393,7 +401,7 @@ FFIStructure class >> resetStructureIfNotIn: alreadyReset [
 
 	alreadyReset add: self.
 	self nestedStructures do: [ :each | each resetStructureIfNotIn: alreadyReset ].
-	compiledSpec := nil
+	self compileFields
 ]
 
 { #category : 'accessing' }
