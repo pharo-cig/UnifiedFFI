@@ -383,6 +383,12 @@ FFIStructure class >> resetAllStructuresIfPlatformChanged [
 ]
 
 { #category : 'class management' }
+FFIStructure class >> resetCompiledSpec [
+
+	compiledSpec := nil
+]
+
+{ #category : 'class management' }
 FFIStructure class >> resetLastCompilationPlatform [
 	
 	"needed to reset compilation while building, to force a reset of structures
