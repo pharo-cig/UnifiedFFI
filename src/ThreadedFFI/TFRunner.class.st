@@ -109,7 +109,7 @@ TFRunner >> directCallbackProcess [
 				on: Exception
 				do: [ :ex | ex pass ] ] ] newProcess.
 	directCallbackProcess priority: Processor highIOPriority.
-	directCallbackProcess name: self name, ' Direct Callback'.
+	directCallbackProcess name: (self name ifNil: [ 'Noname' ]), ' Direct Callback'.
 	directCallbackProcess resume.
 	^ directCallbackProcess
 ]
@@ -221,7 +221,7 @@ TFRunner >> isGILWorker [
 { #category : 'testing' }
 TFRunner >> isInGILWorkerContext [
 
-	self subclassResponsibility
+	^ false
 ]
 
 { #category : 'private' }
