@@ -29,22 +29,6 @@ TFGILWorker class >> named: aName [
 	^ worker
 ]
 
-{ #category : 'executing' }
-TFGILWorker >> executeDetachableFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
-
-	<primitive: 'primitiveDetachableGILWorkerCallout' error: ec>
-
-	self primitiveFailed
-]
-
-{ #category : 'executing' }
-TFGILWorker >> executeFunction: aTFExternalFunction withArguments: arguments usingSemaphore: anInteger [
-
-	<primitive: 'primitiveGILWorkerCallout' error: ec>
-
-	self primitiveFailed
-]
-
 { #category : 'private' }
 TFGILWorker >> primitiveCreateWorker [
 
