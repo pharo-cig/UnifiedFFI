@@ -133,10 +133,9 @@ TFTGILWorker >> isGILWorker [
 
 { #category : 'testing' }
 TFTGILWorker >> isInGILWorkerContext [
-
 	<primitive: 'primitiveIsInGILWorkerContext' error: ec>
 
-	self primitiveFailed
+	^ false
 ]
 
 { #category : 'private' }
