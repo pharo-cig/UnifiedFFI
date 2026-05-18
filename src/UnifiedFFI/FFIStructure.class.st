@@ -160,6 +160,58 @@ FFIStructure class >> compileMethodNamed: aSymbol code: aString classified: prot
 	self compile: aString classified: self generatedFieldProtocolName
 ]
 
+{ #category : 'as yet unclassified' }
+FFIStructure class >> convertToFFIFieldSlots [
+
+	| fieldSpec offset |
+	fieldSpec := self fieldSpec.
+
+	offset := 0.
+	externalStructureAlignment := 1.
+
+	fieldSpec fieldsAndTypesDo: [ :fieldName :type |
+		| slot |
+		"Check: is this name defined in a superclass?"
+		(self superclass bindingOf: fieldName)
+			ifNotNil: [ self notYetImplemented ].
+		fieldName isSymbol
+			ifFalse: [ self notYetImplemented ].
+
+		offset := offset alignedTo: type typeAlignment.
+		slot := fieldName => FFIStructFieldSlot.
+		slot
+			type: type;
+			offset: offset + 1.
+		self
+			slotNamed: fieldName
+			ifFound: [ :found | self removeSlot: found ].
+		self addSlot: slot.
+
+		self
+			compile: ('<1s><r><r><t>^ <1s>' expandMacrosWith: fieldName)
+			classified: self generatedFieldProtocolName.
+		self
+			compile: ('<1s>: anObject<r><r><t><1s> := anObject' expandMacrosWith: fieldName)
+			classified: self generatedFieldProtocolName.
+
+		offset := offset + type typeSize.
+		externalStructureAlignment := externalStructureAlignment max: type typeAlignment ].
+
+	offset := offset alignedTo: externalStructureAlignment.
+
+	"Real compiled spec is the compiled spec of fields plus a header with structure size and
+	structure flag"
+	"Workaround: Set a temporal type to ensure cyclic (pointer) references will work (case of
+	linked lists, for example)."
+	compiledSpec := { ExternalType pointerSpec }.
+	compiledSpec := fieldSpec compileSpec copyWithFirst: (offset bitOr: FFIFlagStructure).
+
+	ExternalType noticeModificationOf: self.
+		
+	"Accessors are overriden, now remove OFFSET_ like variables."
+	self removeAllOffsetVariables
+]
+
 { #category : 'private' }
 FFIStructure class >> defineFieldAccessorsFor: fieldName startingAt: byteOffset type: type [
 	"Define read/write accessors for the given field.
