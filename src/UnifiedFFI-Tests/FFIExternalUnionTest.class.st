@@ -16,13 +16,11 @@ FFIExternalUnionTest >> testUnionAccess [
 	self deny: union getHandle class equals: ExternalAddress.
 	self deny: union isNull.
 
-	union long: 16r04030201.
+	union int64: 16r060504030201.
 	self assert: union byte equals: 16r01.
 	self assert: union short equals: 16r0201.
-	self assert: union long equals: 16r04030201.
+	self assert: union long equals: 16r060504030201.
+	self assert: union int64 equals: 16r060504030201.
 	self assert: union float ~= 0.
-	self assert: union double ~= 0.
-
-	self flag: #pharoTodo	"This is not yet implemented"
-	"struct int64: 123456789101112."
+	self assert: union double ~= 0
 ]
