@@ -15,8 +15,5 @@ Class {
 { #category : 'errors' }
 TFForkCallbackExceptionHandler >> handleExceptionDuring: aBlock [
 
-	aBlock on: Exception do: [ :e |
-		Smalltalk globals
-			at: #LastFFIDirectCallbackException
-			put: e ]
+	aBlock on: Exception fork: [ :e | e pass ]
 ]

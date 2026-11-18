@@ -49,6 +49,13 @@ TFCallbackInvocation >> callbackData [
 	^ TFBasicType pointer callbackReadValue: handle
 ]
 
+{ #category : 'private' }
+TFCallbackInvocation >> cancelReturnWait: semaphoreIndex [
+	<primitive: 'primitiveCancelCallbackReturnWait' error: errorCode>
+
+	self primitiveFailed
+]
+
 { #category : 'operations' }
 TFCallbackInvocation >> execute [
 	| returnValue transformedArguments |
@@ -70,6 +77,13 @@ TFCallbackInvocation >> execute [
 			callback returnType isVoid
 				ifFalse: [ self writeReturnValue: returnValue ].
 			self runner returnCallback: self ] ]
+]
+
+{ #category : 'private' }
+TFCallbackInvocation >> prepareReturnWait: semaphoreIndex [
+	<primitive: 'primitivePrepareCallbackReturnWait' error: errorCode>
+
+	self primitiveFailed
 ]
 
 { #category : 'private' }

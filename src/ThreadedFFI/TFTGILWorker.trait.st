@@ -223,6 +223,19 @@ TFTGILWorker >> primitiveSetGILWorkerName: aString [
 ]
 
 { #category : 'private' }
+TFTGILWorker >> returnCallback: aCallbackInvocation [
+	"Native entry order, not green-process completion order, determines return."
+
+	aCallbackInvocation isNull ifTrue: [ ^ self ].
+	self withCallbackStackLockDo: [
+		self callbackInvocationStack
+			remove: aCallbackInvocation
+			ifAbsent: [ ^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ] ].
+	[ aCallbackInvocation returnExecution ]
+		whileFalse: [ self waitForCallbackReturnOrderingOn: aCallbackInvocation ]
+]
+
+{ #category : 'private' }
 TFTGILWorker >> signalCallbackReturnSemaphore [
 
 	self isInGILWorkerContext
@@ -233,18 +246,20 @@ TFTGILWorker >> signalCallbackReturnSemaphore [
 
 { #category : 'private' }
 TFTGILWorker >> waitForCallbackReturnOrderingOn: aCallbackInvocation [
+	| semaphore semaphoreIndex |
 
-	self isInGILWorkerContext
-		ifTrue: [ ^ self cannotReturnCallbackInWrongOrder: aCallbackInvocation ].
-
-	^ self callbackReturnSemaphore wait
+	semaphore := Semaphore new.
+	semaphoreIndex := Smalltalk registerExternalObject: semaphore.
+	[
+		(aCallbackInvocation prepareReturnWait: semaphoreIndex)
+			ifTrue: [ semaphore wait ]
+	] ensure: [
+		aCallbackInvocation cancelReturnWait: semaphoreIndex.
+		Smalltalk unregisterExternalObject: semaphore ]
 ]
 
 { #category : 'private' }
 TFTGILWorker >> withCallbackStackLockDo: aBlock [
-
-	self isInGILWorkerContext
-		ifTrue: [ ^ aBlock value ].
 
 	^ self stackProtect critical: aBlock
 ]

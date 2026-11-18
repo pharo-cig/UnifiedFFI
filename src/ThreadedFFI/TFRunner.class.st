@@ -272,7 +272,8 @@ TFRunner >> primitiveSetWorkerName: aString [
 
 	<primitive: 'primitiveSetWorkerName'>
 
-	^ self primitiveFailed
+	self flag: #TODO. "Restore when the VM become stable"
+	"^ self primitiveFailed"
 ]
 
 { #category : 'accessing' }
