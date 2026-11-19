@@ -79,6 +79,20 @@ TFCallbackInvocation >> execute [
 			self runner returnCallback: self ] ]
 ]
 
+{ #category : 'testing' }
+TFCallbackInvocation >> isDirectTransport [
+	"Answer whether this invocation was prepared on the direct GIL callback path
+	(DIRECT_SIGNAL). Direct invocations must return through
+	ptExitInterpreterToDirectGILCallback, which transfers control back to the
+	native trampoline and does not resume; if the return primitive ever resumes,
+	the native continuation has been stranded and the GIL handback will stall."
+
+	<primitive: 'primitiveCallbackInvocationTransportMode' error: errorCode>
+
+	self primitiveFailed
+
+]
+
 { #category : 'private' }
 TFCallbackInvocation >> prepareReturnWait: semaphoreIndex [
 	<primitive: 'primitivePrepareCallbackReturnWait' error: errorCode>

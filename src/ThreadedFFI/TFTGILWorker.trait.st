@@ -232,7 +232,15 @@ TFTGILWorker >> returnCallback: aCallbackInvocation [
 			remove: aCallbackInvocation
 			ifAbsent: [ ^ self cannotReturnCallbackFromOldSession: aCallbackInvocation ] ].
 	[ aCallbackInvocation returnExecution ]
-		whileFalse: [ self waitForCallbackReturnOrderingOn: aCallbackInvocation ]
+		whileFalse: [ self waitForCallbackReturnOrderingOn: aCallbackInvocation ].
+	"On the direct GIL path primitiveCallbackReturn must not resume: it transfers
+	control back to the native callback trampoline. Reaching this point with a
+	direct invocation means the native continuation was stranded, which stalls
+	the GIL handback. Signal loudly instead of silently continuing into the
+	callback process loop."
+	aCallbackInvocation isDirectTransport ifTrue: [
+		self error: 'Direct GIL callback return unexpectedly resumed after primitiveCallbackReturn' ]
+
 ]
 
 { #category : 'private' }
