@@ -301,6 +301,13 @@ TFRunner >> release [
 ]
 
 { #category : 'executing' }
+TFRunner >> resetSemaphorePool [
+	semaphorePool ifNotNil: [
+		[ semaphorePool release ] on: Error do: [ :e | "best effort" ].
+		semaphorePool := nil ]
+]
+
+{ #category : 'executing' }
 TFRunner >> returnCallback: aCallbackInvocation [
 	"Entry point to return a callback invocation.
 	Check the callbackInvocation stack to see if the given invocation is the last one.
@@ -346,8 +353,8 @@ TFRunner >> returnCallback: aCallbackInvocation [
 
 { #category : 'accessing' }
 TFRunner >> semaphorePool [
-
 	self ensureInitialized.
+	semaphorePool ifNil: [ semaphorePool := self newSemaphorePool ].
 	^ semaphorePool
 ]
 
